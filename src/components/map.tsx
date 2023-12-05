@@ -1,8 +1,9 @@
-// components/OpenStreetMap.js
 import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { LatLngLiteral } from "leaflet";
+import L, { LatLngLiteral } from "leaflet";
+
+import GeocacheIcon from "./icons";
 
 interface OpenStreetMapProps {
   center: LatLngLiteral;
@@ -29,3 +30,9 @@ const OpenStreetMap: React.FC<OpenStreetMapProps> = ({
 };
 
 export default OpenStreetMap;
+
+var treeIcon = new GeocacheIcon({
+  iconUrl: "../Icons/baseline_park_black_24dp.png",
+});
+
+L.marker([49.43496, 11.86785], { icon: treeIcon }).addTo(OpenStreetMap);
