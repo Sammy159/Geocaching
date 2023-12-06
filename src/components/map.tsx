@@ -13,7 +13,7 @@ interface LeafletMapProps {
 
 const LeafletMap: React.FC<LeafletMapProps> = ({ center, zoom, style }) => {
   const treeIcon = new L.Icon({
-    iconUrl: "../Icons/baseline_park_black_24dp.png",
+    iconUrl: "public/Icons/baseline_park_black_24dp.png",
     iconSize: [32, 32], // Setze die Größe des Icons
     iconAnchor: [16, 32], // Setze den Ankerpunkt des Icons
     popupAnchor: [0, -32], // Setze den Ankerpunkt für das Popup
