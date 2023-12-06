@@ -3,36 +3,33 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L, { LatLngLiteral } from "leaflet";
 
-import GeocacheIcon from "./icons";
+//import GeocacheIcon from "./icons";
 
-interface OpenStreetMapProps {
+interface LeafletMapProps {
   center: LatLngLiteral;
   zoom: number;
   style: { height: string; width: string };
 }
 
-const OpenStreetMap: React.FC<OpenStreetMapProps> = ({
-  center,
-  zoom,
-  style,
-}) => {
+const LeafletMap: React.FC<LeafletMapProps> = ({ center, zoom, style }) => {
+  const treeIcon = new L.Icon({
+    iconUrl: "../Icons/baseline_park_black_24dp.png",
+    iconSize: [32, 32], // Setze die Größe des Icons
+    iconAnchor: [16, 32], // Setze den Ankerpunkt des Icons
+    popupAnchor: [0, -32], // Setze den Ankerpunkt für das Popup
+  });
+
   return (
     <MapContainer center={center} zoom={zoom} style={style}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      <Marker position={center}>
+      <Marker position={center} icon={treeIcon}>
         <Popup>I am a marker!</Popup>
       </Marker>
     </MapContainer>
   );
 };
 
-export default OpenStreetMap;
-
-var treeIcon = new GeocacheIcon({
-  iconUrl: "../Icons/baseline_park_black_24dp.png",
-});
-
-L.marker([49.43496, 11.86785], { icon: treeIcon }).addTo(OpenStreetMap);
+export default LeafletMap;
