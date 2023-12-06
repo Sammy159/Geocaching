@@ -1,11 +1,11 @@
-import LMap from "./components/Map2";
 import "./App.css";
+import Container from "./components/table_container";
 
 function App() {
   return (
     <>
       <h1>Geocaching Amberg</h1>
-      <LMap></LMap>
+      <Container></Container>
     </>
   );
 }

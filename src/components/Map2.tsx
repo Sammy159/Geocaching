@@ -1,29 +1,22 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet-gpx";
 import "./map.css";
-import React, { useEffect, useRef, useState } from "react";
-import L, { LatLngExpression, Map } from "leaflet";
+import React, { useEffect, useRef } from "react";
+import L, { Map, LatLng, LatLngExpression } from "leaflet";
 
-interface MapProps {
-  //geoPoints: GeoPoint[];
-  //radius: number;
-  //voiceIsOn: boolean;
-}
+interface MapProps {}
 
 const LMap: React.FC<MapProps> = () => {
   const map = useRef<Map | null>(null);
+  const gpxLayerRef = useRef<L.GPX | null>(null);
 
   const markerWidth: number = 30;
   const markerHeight: number = markerWidth / 0.61;
 
   useEffect(() => {
     addMap();
+    loadGPXFile();
   }, []);
-
-  useEffect(() => {
-    if (map && map.current) addMarkers();
-    if (map && map.current) loadGPXFile();
-  }, [map]);
 
   function addMap() {
     if (map.current) {
@@ -38,28 +31,32 @@ const LMap: React.FC<MapProps> = () => {
     console.log("addMap Function");
   }
 
-  function addMarkers() {
-    var myIcon = L.icon({
+  function addMarkers(latlng: LatLngExpression) {
+    const myIcon = L.icon({
       iconUrl: "/Icons/baseline_park_black_24dp.png",
       iconSize: [markerWidth, markerHeight],
       iconAnchor: [markerWidth / 2, markerHeight],
       popupAnchor: [-5, -48],
     });
-    if (map && map.current)
-      L.marker([49.43496, 11.86785], { icon: myIcon })
-        .addTo(map.current)
-        .bindPopup("<b>Cache 1</b>");
+
+    L.marker(latlng, { icon: myIcon })
+      .addTo(map.current!)
+      .bindPopup("<b>Cache</b>");
   }
 
   function loadGPXFile() {
-    if (map && map.current) {
-      // Hier setzt du den Pfad zu deiner GPX-Datei ein
-      const gpxFile = "gpx.xml";
+    if (map.current) {
+      const gpxFile = "/gpx.xml";
 
-      // Lade die GPX-Datei und füge sie zur Karte hinzu
-      new L.GPX(gpxFile, { async: true })
+      new L.GPX(gpxFile, {
+        async: true,
+        marker_options: {
+          startIconUrl: "/Icons/baseline_start_black_24dp.png",
+          endIconUrl: "/Icons/baseline_flag_black_24dp.png",
+        },
+      })
         .on("loaded", function (e: any) {
-          map.current?.fitBounds(e.target.getBounds());
+          gpxLayerRef.current = e.target;
         })
         .addTo(map.current);
     }
