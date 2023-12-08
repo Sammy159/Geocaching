@@ -1,13 +1,11 @@
 import "./App.css";
-import Container from "./components/table_container";
-import GpxParserComponent from "./components/gpxParser";
+import Container from "./components/TableContainer";
 
 function App() {
   return (
     <>
       <h1>Geocaching Amberg</h1>
       <Container></Container>
-      <GpxParserComponent />
     </>
   );
 }

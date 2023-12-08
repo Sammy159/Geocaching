@@ -1,13 +1,10 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet-gpx";
 import "./map.css";
-import ExampleComponent from "./gpxParser";
 import React, { useEffect, useRef } from "react";
 import L, { Map, LatLng, LatLngExpression } from "leaflet";
 
-interface MapProps {}
-
-const LMap: React.FC<MapProps> = () => {
+const LMap: React.FC = () => {
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
 
@@ -23,7 +20,7 @@ const LMap: React.FC<MapProps> = () => {
     if (map.current) {
       return;
     }
-    map.current = L.map("map").setView([49.43496, 11.86785], 17);
+    map.current = L.map("map").setView([49.44192, 11.85872], 17);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution:
@@ -46,7 +43,7 @@ const LMap: React.FC<MapProps> = () => {
 
   function loadGPXFile() {
     if (map.current) {
-      const gpxFile = "/gpx.xml";
+      const gpxFile = "/gartenschau.gpx";
 
       new L.GPX(gpxFile, {
         async: true,

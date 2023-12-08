@@ -1,78 +1,61 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { XMLParser } from "fast-xml-parser";
 
-interface Waypoint {
-  position: [number, number];
-  name: string;
-  icon: string;
-}
-
-export const WaypointsComponent: React.FC = () => {
-  const [waypoints, setWaypoints] = useState<Waypoint[]>([]);
-
-  useEffect(() => {
-    const xmlData = XMLReader();
-
-    const parseWaypoints = (xmlData: any): Waypoint[] => {
-      const parsedWaypoints: Waypoint[] = [];
-
-      if (xmlData.gpx && xmlData.gpx.wpt && xmlData.gpx.wpt.length > 0) {
-        xmlData.gpx.wpt.forEach((waypoint: any) => {
-          const latitude = waypoint["$"].lat;
-          const longitude = waypoint["$"].lon;
-          parsedWaypoints.push({
-            position: [parseFloat(latitude), parseFloat(longitude)],
-            name: waypoint.name[0],
-            icon: waypoint.icon,
-          });
-        });
-      }
-
-      return parsedWaypoints;
-    };
-
-    // Parse-Funktion aufrufen und Zustand aktualisieren
-    setWaypoints(parseWaypoints(xmlData));
-  }, []);
-
-  return (
-    <div>
-      <h1>Waypoints</h1>
-      <ul>
-        {waypoints.map((waypoint, index) => (
-          <li key={index}>
-            <strong>Name:</strong> {waypoint.name}, <strong>Position:</strong>{" "}
-            {waypoint.position.join(", ")}, <strong>Icon:</strong>{" "}
-            {waypoint.icon}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export default WaypointsComponent;
-
-const XMLReader = () => {
+const MyGpxParser: React.FC = () => {
   const [xmlContent, setXmlContent] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchXML = async () => {
+    const fetchDataAndParse = async () => {
       try {
-        const response = await fetch("../../public/gpx.xml");
-        const xmlText = await response.text();
-        console.log(response);
-
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-
-        setXmlContent(xmlText);
+        const content = await fetchXMLContent();
+        setXmlContent(content || null);
       } catch (error) {
-        console.error("Fehler beim Laden der XML-Datei:", error);
+        console.error("Fehler beim Laden der XML-Datei in XMLReader:", error);
       }
     };
 
-    fetchXML();
-  }, []); // Leere Abhängigkeitsliste stellt sicher, dass der Effekt nur einmal ausgeführt wird
+    fetchDataAndParse();
+  }, []);
 
-  return xmlContent;
+  const coordinates: any = [];
+
+  useEffect(() => {
+    if (xmlContent !== null) {
+      const xmlDataStr = xmlContent;
+
+      const options = {
+        ignoreAttributes: false,
+      };
+
+      const parser = new XMLParser(options);
+      let jsonObj = parser.parse(xmlDataStr);
+
+      // Do something with jsonObj, e.g.,
+      jsonObj.gpx.trk.trkseg.trkpt.forEach((trkpt: any) => {
+        var lat = trkpt["@_lat"];
+        var lon = trkpt["@_lon"];
+        coordinates.push([parseFloat(lat), parseFloat(lon)]);
+      });
+      console.log(coordinates);
+    }
+  }, [xmlContent]); // Füge xmlContent zur Abhängigkeitsliste hinzu
+
+  return <div>{/* Your React component JSX */}</div>;
+};
+
+export default MyGpxParser;
+
+const fetchXMLContent = async () => {
+  try {
+    const response = await fetch("../../gartenschau.gpx");
+    const xmlText = await response.text();
+
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+
+    return xmlText;
+  } catch (error) {
+    console.error("Fehler beim Laden der XML-Datei:", error);
+    return null;
+  }
 };

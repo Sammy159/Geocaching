@@ -1,6 +1,6 @@
 import LMap from "./Map2";
 import Dropdown from "./Dropdown";
-import WaypointsComponent from "./gpxParser";
+import MyGpxParser from "./GpxParser";
 
 const Container = () => {
   const style = {
@@ -16,7 +16,7 @@ const Container = () => {
 
   return (
     <div style={style}>
-      <WaypointsComponent></WaypointsComponent>
+      <MyGpxParser></MyGpxParser>
       <LMap></LMap>
       <Dropdown options={options} onSelect={handleOptionSelect} />
     </div>
