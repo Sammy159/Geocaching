@@ -1,6 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet-gpx";
 import "./map.css";
+import ExampleComponent from "./gpxParser";
 import React, { useEffect, useRef } from "react";
 import L, { Map, LatLng, LatLngExpression } from "leaflet";
 
@@ -28,7 +29,6 @@ const LMap: React.FC<MapProps> = () => {
       attribution:
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map.current);
-    console.log("addMap Function");
   }
 
   function addMarkers(latlng: LatLngExpression) {
@@ -50,9 +50,14 @@ const LMap: React.FC<MapProps> = () => {
 
       new L.GPX(gpxFile, {
         async: true,
+        gpx_options: { parseElements: ["track", "route", "waypoint"] },
         marker_options: {
-          startIconUrl: "/Icons/baseline_start_black_24dp.png",
-          endIconUrl: "/Icons/baseline_flag_black_24dp.png",
+          startIconUrl: "node_modules/leaflet-gpx/pin-icon-start.png",
+          endIconUrl: "node_modules/leaflet-gpx/pin-icon-end.png",
+          shadowUrl: "node_modules/leaflet-gpx/pin-shadow.png",
+          wptIconUrls: {
+            "": "node_modules/leaflet-gpx/pin-icon-wpt.png",
+          },
         },
       })
         .on("loaded", function (e: any) {

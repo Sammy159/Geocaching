@@ -21,7 +21,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, onSelect }) => {
         onChange={(e) => handleSelect(e.target.value)}
       >
         <option value="" disabled>
-          Wähle einen Cache aus:
+          Auswahl Caches
         </option>
         {options.map((option) => (
           <option key={option} value={option}>
