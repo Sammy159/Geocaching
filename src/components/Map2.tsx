@@ -21,11 +21,10 @@ const LMap: React.FC = () => {
       lon: number;
     }[]
   >([]);
-  const intervalDelay = 2000;
+  const intervalDelay = 200;
   let intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
-  let temp = MyGpxParser();
-  trackCoordinatesRef.current = temp;
+  trackCoordinatesRef.current = MyGpxParser();
 
   const figureIcon = L.icon({
     iconUrl: "./public/Icons/baseline_directions_walk_black_24dp.png",
@@ -98,10 +97,9 @@ const LMap: React.FC = () => {
               trackCoordinatesRef.current[index.current].lat,
               trackCoordinatesRef.current[index.current].lon,
             ]),
-            17
+            20
           );
           // Marker an den aktuellen Standort setzen
-          console.log(firstMarker);
           if (firstMarker.current) {
             markerRef.current = L.marker(
               [
@@ -127,6 +125,9 @@ const LMap: React.FC = () => {
             clearInterval(intervalIdRef.current);
             intervalIdRef.current = null; // Set to null to indicate that the interval is cleared
           }
+          if (index.current == trackCoordinatesRef.current.length) {
+            index.current = 0;
+          }
         }
       }, intervalDelay);
     }
@@ -134,7 +135,6 @@ const LMap: React.FC = () => {
 
   function pauseInterval() {
     if (intervalIdRef.current !== null) {
-      console.log("Intevall cleared");
       clearInterval(intervalIdRef.current);
       intervalIdRef.current = null;
     }
