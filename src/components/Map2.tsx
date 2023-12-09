@@ -1,19 +1,43 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet-gpx";
 import "./map.css";
-import React, { useEffect, useRef } from "react";
-import L, { Map, LatLng, LatLngExpression } from "leaflet";
+import MyGpxParser from "./GpxParser";
+import React, { useEffect, useRef, useState } from "react";
+import L, { Map, LatLngExpression } from "leaflet";
 
 const LMap: React.FC = () => {
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
 
-  const markerWidth: number = 30;
-  const markerHeight: number = markerWidth / 0.61;
+  const markerWidth: number = 25;
+  const markerHeight: number = markerWidth / 0.7;
+
+  let index = useRef<number>(0);
+  let firstMarker = useRef<boolean>(true);
+  let markerRef = useRef<L.Marker | null>(null);
+  const trackCoordinatesRef = useRef<
+    {
+      lat: number;
+      lon: number;
+    }[]
+  >([]);
+  const intervalDelay = 2000;
+  let intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+
+  let temp = MyGpxParser();
+  trackCoordinatesRef.current = temp;
+
+  const figureIcon = L.icon({
+    iconUrl: "./public/Icons/baseline_directions_walk_black_24dp.png",
+    iconSize: [markerWidth, markerHeight],
+    iconAnchor: [markerWidth / 2, markerHeight],
+    popupAnchor: [-5, -48],
+  });
 
   useEffect(() => {
     addMap();
-    loadGPXFile();
+    loadGPXTrack();
+    // Daten laden und trackCoordinatesRef aktualisieren
   }, []);
 
   function addMap() {
@@ -38,10 +62,10 @@ const LMap: React.FC = () => {
 
     L.marker(latlng, { icon: myIcon })
       .addTo(map.current!)
-      .bindPopup("<b>Cache</b>");
+      .bindPopup("<b>Aktueller Standort</b>");
   }
 
-  function loadGPXFile() {
+  function loadGPXTrack() {
     if (map.current) {
       const gpxFile = "/gartenschau.gpx";
 
@@ -64,11 +88,71 @@ const LMap: React.FC = () => {
     }
   }
 
+  function startWalk() {
+    if (intervalIdRef.current === null) {
+      intervalIdRef.current = setInterval(() => {
+        if (index.current < trackCoordinatesRef.current.length) {
+          // Karte auf den aktuellen Standort zentrieren
+          map.current?.setView(
+            L.latLng([
+              trackCoordinatesRef.current[index.current].lat,
+              trackCoordinatesRef.current[index.current].lon,
+            ]),
+            17
+          );
+          // Marker an den aktuellen Standort setzen
+          console.log(firstMarker);
+          if (firstMarker.current) {
+            markerRef.current = L.marker(
+              [
+                trackCoordinatesRef.current[index.current].lat,
+                trackCoordinatesRef.current[index.current].lon,
+              ],
+              { icon: figureIcon }
+            )
+              .addTo(map.current!)
+              .bindPopup("<b>Aktuelle Position</b>");
+            firstMarker.current = false;
+          } else {
+            if (markerRef.current !== null) {
+              markerRef.current.setLatLng([
+                trackCoordinatesRef.current[index.current].lat,
+                trackCoordinatesRef.current[index.current].lon,
+              ]);
+            }
+          }
+          index.current++;
+        } else {
+          if (intervalIdRef.current !== null) {
+            clearInterval(intervalIdRef.current);
+            intervalIdRef.current = null; // Set to null to indicate that the interval is cleared
+          }
+        }
+      }, intervalDelay);
+    }
+  }
+
+  function pauseInterval() {
+    if (intervalIdRef.current !== null) {
+      console.log("Intevall cleared");
+      clearInterval(intervalIdRef.current);
+      intervalIdRef.current = null;
+    }
+  }
+
   return (
     <>
       <div id="map"></div>
+      <div>
+        <MyButton text={"Losgehen"} onClick={startWalk} />
+        <MyButton text={"Pause"} onClick={pauseInterval} />
+      </div>
     </>
   );
 };
 
 export default LMap;
+
+function MyButton({ text, onClick }: { text: string; onClick: () => void }) {
+  return <button onClick={onClick}>{text}</button>;
+}

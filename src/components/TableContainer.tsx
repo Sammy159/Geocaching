@@ -1,6 +1,5 @@
 import LMap from "./Map2";
 import Dropdown from "./Dropdown";
-import MyGpxParser from "./GpxParser";
 
 const Container = () => {
   const style = {
@@ -16,7 +15,6 @@ const Container = () => {
 
   return (
     <div style={style}>
-      <MyGpxParser></MyGpxParser>
       <LMap></LMap>
       <Dropdown options={options} onSelect={handleOptionSelect} />
     </div>
