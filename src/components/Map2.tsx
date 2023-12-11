@@ -5,6 +5,8 @@ import MyGpxParser from "./GpxParser";
 import React, { useEffect, useRef, useState } from "react";
 import L, { Map, LatLngExpression } from "leaflet";
 
+let markerRef: L.Marker | null = null;
+
 const LMap: React.FC = () => {
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
@@ -14,7 +16,7 @@ const LMap: React.FC = () => {
 
   let index = useRef<number>(0);
   let firstMarker = useRef<boolean>(true);
-  let markerRef = useRef<L.Marker | null>(null);
+  //let markerRef = useRef<L.Marker | null>(null);
   const trackCoordinatesRef = useRef<
     {
       lat: number;
@@ -101,7 +103,7 @@ const LMap: React.FC = () => {
           );
           // Marker an den aktuellen Standort setzen
           if (firstMarker.current) {
-            markerRef.current = L.marker(
+            markerRef = L.marker(
               [
                 trackCoordinatesRef.current[index.current].lat,
                 trackCoordinatesRef.current[index.current].lon,
@@ -112,8 +114,8 @@ const LMap: React.FC = () => {
               .bindPopup("<b>Aktuelle Position</b>");
             firstMarker.current = false;
           } else {
-            if (markerRef.current !== null) {
-              markerRef.current.setLatLng([
+            if (markerRef !== null) {
+              markerRef.setLatLng([
                 trackCoordinatesRef.current[index.current].lat,
                 trackCoordinatesRef.current[index.current].lon,
               ]);
@@ -155,4 +157,8 @@ export default LMap;
 
 function MyButton({ text, onClick }: { text: string; onClick: () => void }) {
   return <button onClick={onClick}>{text}</button>;
+}
+
+export function getCurrentPosition() {
+  return markerRef?.getLatLng();
 }
