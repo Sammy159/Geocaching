@@ -2,17 +2,36 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-gpx";
 import "./map.css";
 import MyGpxParser from "./GpxParser";
-import React, { useEffect, useRef, useState } from "react";
-import L, { Map, LatLngExpression } from "leaflet";
+import Dropdown from "./Dropdown";
+import { CalcDistance } from "./Calculations";
+import React, { useEffect, useRef } from "react";
+import L, { Map } from "leaflet";
 
 let markerRef: L.Marker | null = null;
 
 const LMap: React.FC = () => {
+  const style = {
+    display: "flex",
+  };
+
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
 
   const markerWidth: number = 25;
   const markerHeight: number = markerWidth / 0.7;
+
+  const iconDict: { [key: string]: string } = {
+    Cafe: "./Icons/baseline_local_cafe_black_24dp.png",
+    Blume: "./Icons/baseline_local_florist_black_24dp.png",
+    Baum: "./Icons/baseline_park_black_24dp.png",
+    Wasser: "./Icons/baseline_water_black_24dp.png",
+    Wolke: "./Icons/outline_cloud_black_24dp.png",
+    Sitzplatz: "./Icons/outline_deck_black_24dp.png",
+    Trophäe: "./Icons/outline_emoji_event_black_24dp.png",
+    Grill: "./Icons/outline_outdoor_grill_black_24dp.png",
+    Ball: "./Icons/outline_sports_soccer_black_24dp.png",
+    Fragezeichen: "question_mark.png",
+  };
 
   let index = useRef<number>(0);
   let firstMarker = useRef<boolean>(true);
@@ -23,13 +42,13 @@ const LMap: React.FC = () => {
       lon: number;
     }[]
   >([]);
-  const intervalDelay = 200;
+  const intervalDelay = 2000;
   let intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
   trackCoordinatesRef.current = MyGpxParser();
 
   const figureIcon = L.icon({
-    iconUrl: "./public/Icons/baseline_directions_walk_black_24dp.png",
+    iconUrl: "./Icons/baseline_directions_walk_black_24dp.png",
     iconSize: [markerWidth, markerHeight],
     iconAnchor: [markerWidth / 2, markerHeight],
     popupAnchor: [-5, -48],
@@ -38,7 +57,6 @@ const LMap: React.FC = () => {
   useEffect(() => {
     addMap();
     loadGPXTrack();
-    // Daten laden und trackCoordinatesRef aktualisieren
   }, []);
 
   function addMap() {
@@ -53,9 +71,9 @@ const LMap: React.FC = () => {
     }).addTo(map.current);
   }
 
-  function addMarkers(latlng: LatLngExpression) {
+  function addMarkers(latlng: L.LatLng, iconName: string) {
     const myIcon = L.icon({
-      iconUrl: "/Icons/baseline_park_black_24dp.png",
+      iconUrl: iconDict[iconName],
       iconSize: [markerWidth, markerHeight],
       iconAnchor: [markerWidth / 2, markerHeight],
       popupAnchor: [-5, -48],
@@ -63,7 +81,7 @@ const LMap: React.FC = () => {
 
     L.marker(latlng, { icon: myIcon })
       .addTo(map.current!)
-      .bindPopup("<b>Aktueller Standort</b>");
+      .bindPopup("<b>" + iconName + "</b>");
   }
 
   function loadGPXTrack() {
@@ -142,21 +160,67 @@ const LMap: React.FC = () => {
     }
   }
 
+  function getCurrentPosition() {
+    return markerRef?.getLatLng();
+  }
+
+  const handleCacheSelect = (selectedOption: any) => {
+    console.log("Selected option:", selectedOption);
+    //calc LatLon for Cache
+    //jetztige Position bestimmen
+    let currentPosition = getCurrentPosition() || null;
+    const iconName = selectedOption.split(" ");
+    //add Marker to Map
+    if (currentPosition) {
+      currentPosition["lat"] += 0.00002;
+      currentPosition["lng"] += 0.00002;
+      addMarkers(currentPosition, iconName[1]);
+    }
+    //save LatLon with Cache Name in local Storage
+  };
+
+  function saveCoordsToLocalStorage(cacheName: string, coords: string) {
+    localStorage.setItem(cacheName, coords);
+  }
+
+  //Dropdown Menü Optionen
+  const options = [
+    "Cache Cafe",
+    "Cache Blume",
+    "Cache Baum",
+    "Cache Wasser",
+    "Cache Wolke",
+    "Cache Sitzplatz",
+    "Cache Trophäe",
+    "Cache Grill",
+    "Cache Ball",
+    "Cache Fragezeichen",
+  ];
+
   return (
-    <>
+    <div style={style}>
       <div id="map"></div>
-      <div>
-        <MyButton text={"Losgehen"} onClick={startWalk} />
-        <MyButton text={"Pause"} onClick={pauseInterval} />
-      </div>
-    </>
+      <MyButton text={"Losgehen"} onClick={startWalk} />
+      <MyButton text={"Pause"} onClick={pauseInterval} />
+      <Dropdown options={options} onSelect={handleCacheSelect} />
+    </div>
   );
 };
 
 export default LMap;
 
 function MyButton({ text, onClick }: { text: string; onClick: () => void }) {
-  return <button onClick={onClick}>{text}</button>;
+  const style = {
+    width: "120px",
+    height: "50px",
+    backgroundColor: "grey",
+    margin: "5px",
+  };
+  return (
+    <button style={style} onClick={onClick}>
+      {text}
+    </button>
+  );
 }
 
 export function getCurrentPosition() {
