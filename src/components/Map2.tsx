@@ -1,9 +1,9 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet-gpx";
 import "./map.css";
-import MyGpxParser from "./GpxParser";
+import MyGpxParser from "./gpxParser";
 import Dropdown from "./Dropdown";
-import { CalcDistance } from "./Calculations";
+//import { CalcDistance } from "./Calculations";
 import React, { useEffect, useRef } from "react";
 import L, { Map } from "leaflet";
 
@@ -179,9 +179,9 @@ const LMap: React.FC = () => {
     //save LatLon with Cache Name in local Storage
   };
 
-  function saveCoordsToLocalStorage(cacheName: string, coords: string) {
+  /*function saveCoordsToLocalStorage(cacheName: string, coords: string) {
     localStorage.setItem(cacheName, coords);
-  }
+  }*/
 
   //Dropdown Menü Optionen
   const options = [
