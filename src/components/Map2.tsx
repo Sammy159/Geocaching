@@ -92,12 +92,9 @@ const LMap: React.FC = () => {
         async: true,
         gpx_options: { parseElements: ["track", "route", "waypoint"] },
         marker_options: {
-          startIconUrl: "node_modules/leaflet-gpx/pin-icon-start.png",
-          endIconUrl: "node_modules/leaflet-gpx/pin-icon-end.png",
-          shadowUrl: "node_modules/leaflet-gpx/pin-shadow.png",
-          wptIconUrls: {
-            "": "node_modules/leaflet-gpx/pin-icon-wpt.png",
-          },
+          startIconUrl: "leaflet-gpx-icons/pin-icon-start.png",
+          endIconUrl: "leaflet-gpx-icons/pin-icon-end.png",
+          shadowUrl: "leaflet-gpx-icons/pin-shadow.png",
         },
       })
         .on("loaded", function (e: any) {
