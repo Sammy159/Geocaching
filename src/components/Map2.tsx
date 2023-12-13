@@ -1,20 +1,28 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet-gpx";
 import "./map.css";
-import MyGpxParser from "./gpxParser";
+import MyGpxParser from "./GpxParser";
 import Dropdown from "./Dropdown";
+import MyButton from "./Button";
+import CacheManager from "./cacheManager";
 //import { CalcDistance } from "./Calculations";
 import React, { useEffect, useRef } from "react";
 import L, { Map } from "leaflet";
 
 let markerRef: L.Marker | null = null;
 
-const LMap: React.FC = () => {
+interface MapProps {
+  isHiding: boolean;
+}
+
+const LMap: React.FC<MapProps> = ({ isHiding }) => {
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
 
   const markerWidth: number = 25;
   const markerHeight: number = markerWidth / 0.7;
+
+  const cacheManager = new CacheManager();
 
   const iconDict: { [key: string]: string } = {
     Cafe: "./Icons/baseline_local_cafe_black_24dp.png",
@@ -30,18 +38,17 @@ const LMap: React.FC = () => {
   };
 
   let index = useRef<number>(0);
-  let firstMarker = useRef<boolean>(true);
-  //let markerRef = useRef<L.Marker | null>(null);
+  let isFirstMarker = useRef<boolean>(true);
+
   const trackCoordinatesRef = useRef<
     {
       lat: number;
       lon: number;
     }[]
   >([]);
+  trackCoordinatesRef.current = MyGpxParser();
   const intervalDelay = 2000;
   let intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-
-  trackCoordinatesRef.current = MyGpxParser();
 
   const figureIcon = L.icon({
     iconUrl: "./Icons/baseline_directions_walk_black_24dp.png",
@@ -67,7 +74,7 @@ const LMap: React.FC = () => {
     }).addTo(map.current);
   }
 
-  function addMarkers(latlng: L.LatLng, iconName: string) {
+  function addCacheMarkers(latlng: L.LatLng, iconName: string) {
     const myIcon = L.icon({
       iconUrl: iconDict[iconName],
       iconSize: [markerWidth, markerHeight],
@@ -75,9 +82,12 @@ const LMap: React.FC = () => {
       popupAnchor: [-5, -48],
     });
 
-    L.marker(latlng, { icon: myIcon })
+    const marker = L.marker(latlng, { icon: myIcon })
       .addTo(map.current!)
       .bindPopup("<b>" + iconName + "</b>");
+    //TODO: Brache ich die Referenz auf den Marker direkt?
+    //-> Merken: setOpacity für suchen Phase!
+    cacheManager.addMarker(iconName, latlng, marker, false);
   }
 
   function loadGPXTrack() {
@@ -113,7 +123,7 @@ const LMap: React.FC = () => {
             20
           );
           // Marker an den aktuellen Standort setzen
-          if (firstMarker.current) {
+          if (isFirstMarker.current) {
             markerRef = L.marker(
               [
                 trackCoordinatesRef.current[index.current].lat,
@@ -123,7 +133,7 @@ const LMap: React.FC = () => {
             )
               .addTo(map.current!)
               .bindPopup("<b>Aktuelle Position</b>");
-            firstMarker.current = false;
+            isFirstMarker.current = false;
           } else {
             if (markerRef !== null) {
               markerRef.setLatLng([
@@ -159,62 +169,34 @@ const LMap: React.FC = () => {
 
   const handleCacheSelect = (selectedOption: any) => {
     console.log("Selected option:", selectedOption);
-    //calc LatLon for Cache
-    //jetztige Position bestimmen
+    //get current position
     let currentPosition = getCurrentPosition() || null;
     const iconName = selectedOption.split(" ");
     //add Marker to Map
     if (currentPosition) {
+      //calc LatLon for Cache
       currentPosition["lat"] += 0.00002;
       currentPosition["lng"] += 0.00002;
-      addMarkers(currentPosition, iconName[1]);
+      addCacheMarkers(currentPosition, iconName[1]);
     }
-    //save LatLon with Cache Name in local Storage
+    //TODO: save LatLon with Cache Name in local Storage
   };
 
   /*function saveCoordsToLocalStorage(cacheName: string, coords: string) {
     localStorage.setItem(cacheName, coords);
   }*/
 
-  //Dropdown Menü Optionen
-  const options = [
-    "Cache Cafe",
-    "Cache Blume",
-    "Cache Baum",
-    "Cache Wasser",
-    "Cache Wolke",
-    "Cache Sitzplatz",
-    "Cache Trophäe",
-    "Cache Grill",
-    "Cache Ball",
-    "Cache Fragezeichen",
-  ];
-
   return (
     <>
       <div id="map"></div>
       <MyButton text={"Losgehen"} onClick={startWalk} />
       <MyButton text={"Pause"} onClick={pauseInterval} />
-      <Dropdown options={options} onSelect={handleCacheSelect} />
+      <Dropdown onSelect={handleCacheSelect} />
     </>
   );
 };
 
 export default LMap;
-
-function MyButton({ text, onClick }: { text: string; onClick: () => void }) {
-  const style = {
-    width: "120px",
-    height: "50px",
-    backgroundColor: "grey",
-    margin: "5px",
-  };
-  return (
-    <button style={style} onClick={onClick}>
-      {text}
-    </button>
-  );
-}
 
 export function getCurrentPosition() {
   return markerRef?.getLatLng();
