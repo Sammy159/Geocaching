@@ -17,8 +17,8 @@ export default defineConfig({
         start_url: ".",
         icons: [
           {
-            src: "/outline_landscape_black_24dp.png",
-            sizes: "24x24",
+            src: "/icon-landscape.jpg",
+            sizes: "512x512",
             type: "image/png",
           },
         ],
