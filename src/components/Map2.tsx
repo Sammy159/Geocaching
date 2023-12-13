@@ -10,10 +10,6 @@ import L, { Map } from "leaflet";
 let markerRef: L.Marker | null = null;
 
 const LMap: React.FC = () => {
-  const style = {
-    display: "flex",
-  };
-
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
 
@@ -27,7 +23,7 @@ const LMap: React.FC = () => {
     Wasser: "./Icons/baseline_water_black_24dp.png",
     Wolke: "./Icons/outline_cloud_black_24dp.png",
     Sitzplatz: "./Icons/outline_deck_black_24dp.png",
-    Trophäe: "./Icons/outline_emoji_event_black_24dp.png",
+    Trophäe: "./Icons/outline_emoji_events_black_24dp.png",
     Grill: "./Icons/outline_outdoor_grill_black_24dp.png",
     Ball: "./Icons/outline_sports_soccer_black_24dp.png",
     Fragezeichen: "question_mark.png",
@@ -195,12 +191,12 @@ const LMap: React.FC = () => {
   ];
 
   return (
-    <div style={style}>
+    <>
       <div id="map"></div>
       <MyButton text={"Losgehen"} onClick={startWalk} />
       <MyButton text={"Pause"} onClick={pauseInterval} />
       <Dropdown options={options} onSelect={handleCacheSelect} />
-    </div>
+    </>
   );
 };
 
