@@ -14,6 +14,10 @@ function App() {
     setIsHiding(false);
     setNextScreen(true);
   }
+  function backToHome() {
+    setIsHiding(false);
+    setNextScreen(false);
+  }
   return (
     <>
       <h1>Geocaching Amberg LGS</h1>
@@ -21,8 +25,15 @@ function App() {
         //TODO: Die Buttons  müssen noch verschwinden sobald man Hide/Seek geht
         //TODO: Zurück zum Menü-Button machen, der angezeigt wird, sobald man in Hide/Seek Phase ist
       }
-      <MyButton text={"Verstecken"} onClick={showHidingScreen}></MyButton>
-      <MyButton text={"Suchen"} onClick={showSeekingScreen}></MyButton>
+      {!showNextScreen ? (
+        <>
+          <MyButton text={"Verstecken"} onClick={showHidingScreen}></MyButton>
+          <MyButton text={"Suchen"} onClick={showSeekingScreen}></MyButton>
+        </>
+      ) : (
+        <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
+      )}
+
       <ShowHidingScreen
         showNextScreen={showNextScreen}
         isHiding={isHiding}

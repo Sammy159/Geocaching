@@ -37,6 +37,16 @@ export default class CacheManager {
       this.markersDictionary.set(name, markerInfo);
     }
   }
+
+  getNumberOfHidden(): number {
+    let count = 0;
+    this.markersDictionary.forEach((markerInfo) => {
+      if (!markerInfo.found) {
+        count++;
+      }
+    });
+    return count;
+  }
 }
 
 //Verwendung:

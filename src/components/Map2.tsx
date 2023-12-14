@@ -6,7 +6,7 @@ import Dropdown from "./Dropdown";
 import MyButton from "./Button";
 import CacheManager from "./cacheManager";
 //import { CalcDistance } from "./Calculations";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import L, { Map } from "leaflet";
 
 let markerRef: L.Marker | null = null;
@@ -16,7 +16,6 @@ interface MapProps {
 }
 
 const LMap: React.FC<MapProps> = ({ isHiding }) => {
-  console.log(isHiding);
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
 
@@ -24,6 +23,7 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
   const markerHeight: number = markerWidth / 0.7;
 
   const cacheManager = new CacheManager();
+  const [cachesLeft, setCachesLeft] = useState(0);
 
   const iconDict: { [key: string]: string } = {
     Cafe: "./Icons/baseline_local_cafe_black_24dp.png",
@@ -35,7 +35,7 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
     Trophäe: "./Icons/outline_emoji_events_black_24dp.png",
     Grill: "./Icons/outline_outdoor_grill_black_24dp.png",
     Ball: "./Icons/outline_sports_soccer_black_24dp.png",
-    Fragezeichen: "question_mark.png",
+    Fragezeichen: "./Icons/question_mark.png",
   };
 
   let index = useRef<number>(0);
@@ -61,6 +61,7 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
   useEffect(() => {
     addMap();
     loadGPXTrack();
+    setNumbOfCachesLeft();
   }, []);
 
   function addMap() {
@@ -89,6 +90,12 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
     //TODO: Brache ich die Referenz auf den Marker direkt?
     //-> Merken: setOpacity für suchen Phase!
     cacheManager.addMarker(iconName, latlng, marker, false);
+    setNumbOfCachesLeft();
+  }
+
+  function setNumbOfCachesLeft() {
+    const numb = cacheManager.getNumberOfHidden();
+    setCachesLeft(numb);
   }
 
   function loadGPXTrack() {
@@ -189,10 +196,11 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
 
   return (
     <>
+      <div>Anzahl noch versteckter Caches: {cachesLeft}</div>
       <div id="map"></div>
       <MyButton text={"Losgehen"} onClick={startWalk} />
       <MyButton text={"Pause"} onClick={pauseInterval} />
-      <Dropdown onSelect={handleCacheSelect} />
+      {isHiding ? <Dropdown onSelect={handleCacheSelect} /> : null}
     </>
   );
 };
