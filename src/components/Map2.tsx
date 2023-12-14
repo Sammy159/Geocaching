@@ -16,6 +16,7 @@ interface MapProps {
 }
 
 const LMap: React.FC<MapProps> = ({ isHiding }) => {
+  console.log(isHiding);
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
 
