@@ -20,9 +20,11 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
   const gpxLayerRef = useRef<L.GPX | null>(null);
 
   const markerWidth: number = 25;
-  const markerHeight: number = markerWidth / 0.7;
+  const markerHeight: number = markerWidth;
 
-  const cacheManager = new CacheManager();
+  //TODO: Problem: Wird zurückgesetzt!
+  const cacheManagerRef = useRef<CacheManager>(new CacheManager());
+  //State zum neu Rendern bei veränderung der Nummer
   const [cachesLeft, setCachesLeft] = useState(0);
 
   const iconDict: { [key: string]: string } = {
@@ -61,7 +63,9 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
   useEffect(() => {
     addMap();
     loadGPXTrack();
+    console.log(cacheManagerRef);
     setNumbOfCachesLeft();
+    if (!isHiding) searchingPhase();
   }, []);
 
   function addMap() {
@@ -89,12 +93,12 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
       .bindPopup("<b>" + iconName + "</b>");
     //TODO: Brache ich die Referenz auf den Marker direkt?
     //-> Merken: setOpacity für suchen Phase!
-    cacheManager.addMarker(iconName, latlng, marker, false);
+    cacheManagerRef.current.addMarker(iconName, latlng, marker, false);
     setNumbOfCachesLeft();
   }
 
   function setNumbOfCachesLeft() {
-    const numb = cacheManager.getNumberOfHidden();
+    const numb = cacheManagerRef.current.getNumberOfHidden();
     setCachesLeft(numb);
   }
 
@@ -176,27 +180,42 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
   }
 
   const handleCacheSelect = (selectedOption: any) => {
-    console.log("Selected option:", selectedOption);
     //get current position
     let currentPosition = getCurrentPosition() || null;
     const iconName = selectedOption.split(" ");
     //add Marker to Map
     if (currentPosition) {
       //calc LatLon for Cache
-      currentPosition["lat"] += 0.00002;
-      currentPosition["lng"] += 0.00002;
+      currentPosition["lat"] += 0.00003;
+      currentPosition["lng"] += 0.00003;
       addCacheMarkers(currentPosition, iconName[1]);
+      saveCoordsToLocalStorage(iconName[1], currentPosition.toString());
     }
-    //TODO: save LatLon with Cache Name in local Storage
   };
 
-  /*function saveCoordsToLocalStorage(cacheName: string, coords: string) {
+  function saveCoordsToLocalStorage(cacheName: string, coords: string) {
     localStorage.setItem(cacheName, coords);
-  }*/
+  }
+
+  function searchingPhase() {
+    hideMarkers();
+    setNumbOfCachesLeft();
+    console.log("searchingPhase");
+  }
+
+  function hideMarkers() {
+    const allCacheNames = cacheManagerRef.current.getNames();
+    allCacheNames.forEach((name) => {
+      const markerInfo = cacheManagerRef.current.getMarkerInfo(name);
+      markerInfo?.marker.setOpacity(0);
+    });
+  }
 
   return (
     <>
-      <div>Anzahl noch versteckter Caches: {cachesLeft}</div>
+      <div>
+        Anzahl {isHiding ? "" : "noch"} versteckter Caches: {cachesLeft}
+      </div>
       <div id="map"></div>
       <MyButton text={"Losgehen"} onClick={startWalk} />
       <MyButton text={"Pause"} onClick={pauseInterval} />

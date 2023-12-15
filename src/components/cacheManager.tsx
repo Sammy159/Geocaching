@@ -47,6 +47,14 @@ export default class CacheManager {
     });
     return count;
   }
+
+  getNames(): string[] {
+    let names: string[] = [];
+    this.markersDictionary.forEach((markerInfo) => {
+      names.push(markerInfo.name);
+    });
+    return names;
+  }
 }
 
 //Verwendung:

@@ -1,6 +1,7 @@
 import "./App.css";
 import MyButton from "./components/Button";
-import ShowHidingScreen from "./components/hideAndSeek";
+//import ShowHidingScreen from "./components/hideAndSeek";
+import LMap from "./components/Map2";
 import { useState } from "react";
 
 function App() {
@@ -21,10 +22,6 @@ function App() {
   return (
     <>
       <h1>Geocaching Amberg LGS</h1>
-      {
-        //TODO: Die Buttons  müssen noch verschwinden sobald man Hide/Seek geht
-        //TODO: Zurück zum Menü-Button machen, der angezeigt wird, sobald man in Hide/Seek Phase ist
-      }
       {!showNextScreen ? (
         <>
           <MyButton text={"Verstecken"} onClick={showHidingScreen}></MyButton>
@@ -34,10 +31,7 @@ function App() {
         <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
       )}
 
-      <ShowHidingScreen
-        showNextScreen={showNextScreen}
-        isHiding={isHiding}
-      ></ShowHidingScreen>
+      {showNextScreen ? <LMap isHiding={isHiding}></LMap> : null}
     </>
   );
 }
