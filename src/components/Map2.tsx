@@ -23,7 +23,7 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
   const markerHeight: number = markerWidth;
 
   //TODO: Problem: Wird zurückgesetzt!
-  const cacheManagerRef = useRef<CacheManager>(new CacheManager());
+  const cacheManager = useCacheManager();
   //State zum neu Rendern bei veränderung der Nummer
   const [cachesLeft, setCachesLeft] = useState(0);
 
