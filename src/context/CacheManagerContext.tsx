@@ -1,16 +1,12 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import CacheManager from "../components/cacheManager";
-import LMap from "../components/Map2";
 
-// Erstellen des Contexts
-const CacheManagerContext = createContext(null);
+// Definieren des Typs für den Context
+const CacheManagerContext = createContext<CacheManager | null>(null);
 
-interface CacheProps {
-    isHiding: boolean;
-  }
-
-export const CacheManagerProvider:<CacheProps> = ({ children, isHiding }) => {
-  const [cacheManager, setCacheManager] = useState(null);
+export const CacheManagerProvider = ({ children }: any) => {
+  // Definieren des Typs für useState
+  const [cacheManager, setCacheManager] = useState<CacheManager | null>(null);
 
   useEffect(() => {
     // Initialisierung des CacheManagers
@@ -29,12 +25,3 @@ export const CacheManagerProvider:<CacheProps> = ({ children, isHiding }) => {
 export const useCacheManager = () => {
   return useContext(CacheManagerContext);
 };
-
-// Anwendung des Providers in Ihrer Hauptkomponente
-function App() {
-  return (
-    <CacheManagerProvider isHiding={isHiding}>
-      {<LMap isHiding={isHiding}></LMap>}
-    </CacheManagerProvider>
-  );
-}

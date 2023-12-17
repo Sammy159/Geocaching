@@ -1,7 +1,6 @@
 import "./App.css";
 import MyButton from "./components/Button";
-//import ShowHidingScreen from "./components/hideAndSeek";
-import { CacheManagerProvider } from "./context/CacheManagerContext";
+import LMap from "./components/Map2";
 import { useState } from "react";
 
 function App() {
@@ -31,9 +30,7 @@ function App() {
         <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
       )}
 
-      {showNextScreen ? (
-        <CacheManagerProvider isHiding={isHiding}></CacheManagerProvider>
-      ) : null}
+      {showNextScreen ? <LMap isHiding={isHiding}></LMap> : null}
     </>
   );
 }

@@ -4,7 +4,7 @@ import "./map.css";
 import MyGpxParser from "./GpxParser";
 import Dropdown from "./Dropdown";
 import MyButton from "./Button";
-import CacheManager from "./cacheManager";
+import { useCacheManager } from "../context/CacheManagerContext";
 //import { CalcDistance } from "./Calculations";
 import React, { useEffect, useRef, useState } from "react";
 import L, { Map } from "leaflet";
@@ -63,7 +63,7 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
   useEffect(() => {
     addMap();
     loadGPXTrack();
-    console.log(cacheManagerRef);
+    console.log(cacheManager);
     setNumbOfCachesLeft();
     if (!isHiding) searchingPhase();
   }, []);
@@ -93,13 +93,13 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
       .bindPopup("<b>" + iconName + "</b>");
     //TODO: Brache ich die Referenz auf den Marker direkt?
     //-> Merken: setOpacity für suchen Phase!
-    cacheManagerRef.current.addMarker(iconName, latlng, marker, false);
+    cacheManager?.addMarker(iconName, latlng, marker, false);
     setNumbOfCachesLeft();
   }
 
   function setNumbOfCachesLeft() {
-    const numb = cacheManagerRef.current.getNumberOfHidden();
-    setCachesLeft(numb);
+    const numb = cacheManager?.getNumberOfHidden();
+    if (numb) setCachesLeft(numb);
   }
 
   function loadGPXTrack() {
@@ -204,9 +204,9 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
   }
 
   function hideMarkers() {
-    const allCacheNames = cacheManagerRef.current.getNames();
-    allCacheNames.forEach((name) => {
-      const markerInfo = cacheManagerRef.current.getMarkerInfo(name);
+    const allCacheNames = cacheManager?.getNames();
+    allCacheNames?.forEach((name) => {
+      const markerInfo = cacheManager?.getMarkerInfo(name);
       markerInfo?.marker.setOpacity(0);
     });
   }
