@@ -5,7 +5,7 @@ import MyGpxParser from "./GpxParser";
 import Dropdown from "./Dropdown";
 import MyButton from "./Button";
 import { useCacheManager } from "../context/CacheManagerContext";
-//import { CalcDistance } from "./Calculations";
+import { CalcDistance } from "./Calculations";
 import React, { useEffect, useRef, useState } from "react";
 import L, { Map } from "leaflet";
 
@@ -22,9 +22,8 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
   const markerWidth: number = 25;
   const markerHeight: number = markerWidth;
 
-  //TODO: Problem: Wird zurückgesetzt!
   const cacheManager = useCacheManager();
-  //State zum neu Rendern bei veränderung der Nummer
+  //State zum neu Rendern bei Veränderung der Nummen
   const [cachesLeft, setCachesLeft] = useState(0);
 
   const iconDict: { [key: string]: string } = {
@@ -126,32 +125,42 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
     if (intervalIdRef.current === null) {
       intervalIdRef.current = setInterval(() => {
         if (index.current < trackCoordinatesRef.current.length) {
+          const trackLat = trackCoordinatesRef.current[index.current].lat;
+          const trackLng = trackCoordinatesRef.current[index.current].lon;
+          if (!isHiding) {
+            const allCacheNames = cacheManager?.getNames();
+            allCacheNames?.forEach((name) => {
+              const markerInfo = cacheManager?.getMarkerInfo(name);
+              const latlng = markerInfo?.marker.getLatLng();
+              if (latlng) {
+                //wenn im Umkreis von x Metern, dann Pop-Up und TTS
+                if (
+                  CalcDistance(trackLat, trackLng, latlng.lat, latlng.lng) < 50
+                ) {
+                  if (map.current) {
+                    //Pop-Up
+                    var popup = L.popup()
+                      .setLatLng(latlng)
+                      .setContent(
+                        "<p>Hello world!<br />This is a nice popup.</p>"
+                      )
+                      .openOn(map.current);
+                  }
+                }
+              }
+            });
+          }
           // Karte auf den aktuellen Standort zentrieren
-          map.current?.setView(
-            L.latLng([
-              trackCoordinatesRef.current[index.current].lat,
-              trackCoordinatesRef.current[index.current].lon,
-            ]),
-            20
-          );
+          map.current?.setView(L.latLng([trackLat, trackLng]), 20);
           // Marker an den aktuellen Standort setzen
           if (isFirstMarker.current) {
-            markerRef = L.marker(
-              [
-                trackCoordinatesRef.current[index.current].lat,
-                trackCoordinatesRef.current[index.current].lon,
-              ],
-              { icon: figureIcon }
-            )
+            markerRef = L.marker([trackLat, trackLng], { icon: figureIcon })
               .addTo(map.current!)
               .bindPopup("<b>Aktuelle Position</b>");
             isFirstMarker.current = false;
           } else {
             if (markerRef !== null) {
-              markerRef.setLatLng([
-                trackCoordinatesRef.current[index.current].lat,
-                trackCoordinatesRef.current[index.current].lon,
-              ]);
+              markerRef.setLatLng([trackLat, trackLng]);
             }
           }
           index.current++;
@@ -207,7 +216,7 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
     const allCacheNames = cacheManager?.getNames();
     allCacheNames?.forEach((name) => {
       const markerInfo = cacheManager?.getMarkerInfo(name);
-      markerInfo?.marker.setOpacity(0);
+      markerInfo?.marker.setOpacity(100);
     });
   }
 
