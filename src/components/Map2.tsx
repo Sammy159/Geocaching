@@ -28,6 +28,8 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
   //State zum neu Rendern bei Veränderung der Nummen
   const [cachesLeft, setCachesLeft] = useState(0);
 
+  const [localQrResult, setLocalQrResult] = useState(qrResult);
+
   const iconDict: { [key: string]: string } = {
     Cafe: "./Icons/baseline_local_cafe_black_24dp.png",
     Blume: "./Icons/baseline_local_florist_black_24dp.png",
@@ -64,10 +66,17 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
   useEffect(() => {
     addMap();
     loadGPXTrack();
-    console.log(cacheManager);
     setNumbOfCachesLeft();
     if (!isHiding) searchingPhase();
   }, []);
+
+  useEffect(() => {
+    setLocalQrResult(qrResult);
+    //TODO:
+    //kapieren, dass Cache gefunde wurde
+    foundCache(localQrResult);
+    //Cache Daten aktualisieren
+  }, [qrResult]);
 
   function addMap() {
     if (map.current) {
@@ -220,6 +229,15 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
       const markerInfo = cacheManager?.getMarkerInfo(name);
       markerInfo?.marker.setOpacity(100);
     });
+  }
+
+  function foundCache(cacheName: string) {
+    if (cacheManager?.isMarkerPresent(cacheName)) {
+      //wenn Cache im CacheManager vorhanden ist
+      cacheManager?.updateMarkerFoundStatus(cacheName, true);
+      cacheManager?.updateMarkerTime(cacheName, new Date());
+      cacheManager?.getMarkerInfo(cacheName)?.marker.addTo(map.current!);
+    }
   }
 
   return (

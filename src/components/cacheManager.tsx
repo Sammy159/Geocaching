@@ -5,6 +5,7 @@ interface MarkerInfo {
   latLng: L.LatLng;
   marker: L.Marker;
   found: boolean;
+  time?: Date;
 }
 
 export default class CacheManager {
@@ -14,13 +15,15 @@ export default class CacheManager {
     name: string,
     latlng: L.LatLng,
     marker: L.Marker,
-    found: boolean
+    found: boolean,
+    time: Date = new Date()
   ): void {
     const markerInfo: MarkerInfo = {
       name,
       latLng: latlng,
       marker,
       found,
+      time,
     };
 
     this.markersDictionary.set(name, markerInfo);
@@ -54,6 +57,18 @@ export default class CacheManager {
       names.push(markerInfo.name);
     });
     return names;
+  }
+
+  updateMarkerTime(name: string, newTime: Date): void {
+    const markerInfo = this.markersDictionary.get(name);
+    if (markerInfo) {
+      markerInfo.time = newTime;
+      this.markersDictionary.set(name, markerInfo);
+    }
+  }
+
+  isMarkerPresent(name: string): boolean {
+    return this.markersDictionary.has(name);
   }
 }
 
