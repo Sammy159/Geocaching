@@ -7,6 +7,7 @@ import QrReader from "./components/QRCodeReader";
 function App() {
   const [isHiding, setIsHiding] = useState(false);
   const [showNextScreen, setNextScreen] = useState(false);
+  const [qrResult, setQRresult] = useState();
   function showHidingScreen() {
     setIsHiding(true);
     setNextScreen(true);
@@ -18,6 +19,12 @@ function App() {
   function backToHome() {
     setIsHiding(false);
     setNextScreen(false);
+  }
+  function handleQRresult(result: any) {
+    setQRresult(result);
+  }
+  function handleQRerror(error: any) {
+    console.log(error?.message);
   }
   return (
     <>
@@ -33,7 +40,11 @@ function App() {
 
       {showNextScreen ? (
         <>
-          <QrReader></QrReader>
+          <QrReader
+            handleDecode={handleQRresult}
+            handleError={handleQRerror}
+          ></QrReader>
+          <p>{qrResult}</p>
           <LMap isHiding={isHiding}></LMap>
         </>
       ) : null}

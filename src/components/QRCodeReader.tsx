@@ -1,12 +1,13 @@
+import React from "react";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 
-const QrReader = () => {
-  return (
-    <QrScanner
-      onDecode={(result) => console.log(result)}
-      onError={(error) => console.log(error?.message)}
-    />
-  );
+interface QrReaderProps {
+  handleDecode: (result: any) => any;
+  handleError: (error: any) => any;
+}
+
+const QrReader: React.FC<QrReaderProps> = ({ handleDecode, handleError }) => {
+  return <QrScanner onDecode={handleDecode} onError={handleError} />;
 };
 
 export default QrReader;
