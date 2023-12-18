@@ -13,9 +13,10 @@ let markerRef: L.Marker | null = null;
 
 interface MapProps {
   isHiding: boolean;
+  qrResult: string;
 }
 
-const LMap: React.FC<MapProps> = ({ isHiding }) => {
+const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
 

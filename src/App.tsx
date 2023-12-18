@@ -1,13 +1,16 @@
 import "./App.css";
+import "./components/button.css";
 import MyButton from "./components/Button";
 import LMap from "./components/Map2";
 import { useState } from "react";
 import QrReader from "./components/QRCodeReader";
+import qrIcon from "/Icons/outline_qr_code_scanner_black_24dp.png";
 
 function App() {
   const [isHiding, setIsHiding] = useState(false);
   const [showNextScreen, setNextScreen] = useState(false);
-  const [qrResult, setQRresult] = useState();
+  const [showQRReader, setShowQRReader] = useState(false);
+  const [qrResult, setQRresult] = useState<string>("");
   function showHidingScreen() {
     setIsHiding(true);
     setNextScreen(true);
@@ -22,9 +25,14 @@ function App() {
   }
   function handleQRresult(result: any) {
     setQRresult(result);
+    setShowQRReader(false);
   }
   function handleQRerror(error: any) {
     console.log(error?.message);
+    setShowQRReader(false);
+  }
+  function toggleQRReader() {
+    setShowQRReader(!showQRReader); // Umschalten der Anzeige des QR-Lesers
   }
   return (
     <>
@@ -35,18 +43,27 @@ function App() {
           <MyButton text={"Suchen"} onClick={showSeekingScreen}></MyButton>
         </>
       ) : (
-        <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
+        <>
+          <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
+          <button
+            onClick={toggleQRReader}
+            className="myButton"
+            style={{ backgroundColor: "white" }}
+          >
+            <img src={qrIcon} alt="QR Leser" />
+          </button>
+        </>
       )}
 
-      {showNextScreen ? (
-        <>
+      {showNextScreen &&
+        showQRReader && ( // QR-Leser nur anzeigen, wenn showNextScreen und showQRReader true sind
           <QrReader
             handleDecode={handleQRresult}
             handleError={handleQRerror}
           ></QrReader>
-          <p>{qrResult}</p>
-          <LMap isHiding={isHiding}></LMap>
-        </>
+        )}
+      {showNextScreen ? (
+        <LMap isHiding={isHiding} qrResult={qrResult}></LMap>
       ) : null}
     </>
   );
