@@ -21,6 +21,7 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
 
   const markerWidth: number = 25;
   const markerHeight: number = markerWidth;
+  const searchRadius: number = 50;
 
   const cacheManager = useCacheManager();
   //State zum neu Rendern bei Veränderung der Nummen
@@ -90,8 +91,6 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
     const marker = L.marker(latlng, { icon: myIcon })
       .addTo(map.current!)
       .bindPopup("<b>" + iconName + "</b>");
-    //TODO: Brache ich die Referenz auf den Marker direkt?
-    //-> Merken: setOpacity für suchen Phase!
     cacheManager?.addMarker(iconName, latlng, marker, false);
     setNumbOfCachesLeft();
   }
@@ -135,16 +134,18 @@ const LMap: React.FC<MapProps> = ({ isHiding }) => {
               if (latlng) {
                 //wenn im Umkreis von x Metern, dann Pop-Up und TTS
                 if (
-                  CalcDistance(trackLat, trackLng, latlng.lat, latlng.lng) < 50
+                  CalcDistance(trackLat, trackLng, latlng.lat, latlng.lng) <
+                  searchRadius
                 ) {
                   if (map.current) {
                     //Pop-Up
-                    var popup = L.popup()
-                      .setLatLng(latlng)
-                      .setContent(
-                        "<p>Hello world!<br />This is a nice popup.</p>"
-                      )
+                    L.popup()
+                      .setLatLng([trackLat, trackLng])
+                      .setContent("<p>Nah dran!<br />Cache" + name + "</p>")
                       .openOn(map.current);
+                    //TTS
+                    var speech = new SpeechSynthesisUtterance(name);
+                    window.speechSynthesis.speak(speech);
                   }
                 }
               }

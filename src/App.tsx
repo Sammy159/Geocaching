@@ -2,6 +2,7 @@ import "./App.css";
 import MyButton from "./components/Button";
 import LMap from "./components/Map2";
 import { useState } from "react";
+import QrReader from "./components/QRCodeReader";
 
 function App() {
   const [isHiding, setIsHiding] = useState(false);
@@ -30,7 +31,12 @@ function App() {
         <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
       )}
 
-      {showNextScreen ? <LMap isHiding={isHiding}></LMap> : null}
+      {showNextScreen ? (
+        <>
+          <QrReader></QrReader>
+          <LMap isHiding={isHiding}></LMap>
+        </>
+      ) : null}
     </>
   );
 }
