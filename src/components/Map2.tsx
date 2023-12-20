@@ -54,6 +54,8 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
   const intervalDelay = 2000;
   let intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
+  const [savedCaches, setSavedCaches] = useState(null);
+
   const figureIcon = L.icon({
     iconUrl: "./Icons/baseline_directions_walk_black_24dp.png",
     iconSize: [markerWidth, markerHeight],
@@ -77,6 +79,20 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
       }
     }
   }, [qrResult]);
+
+  useEffect(() => {
+    // Versuchen, Daten aus dem LocalStorage zu holen
+    const gespeicherteDaten = localStorage.getItem("Geocaches");
+
+    if (gespeicherteDaten) {
+      setSavedCaches(JSON.parse(gespeicherteDaten));
+      console.log(savedCaches);
+    }
+  }, []);
+
+  useEffect(() => {
+    saveCachesToLocalStorage();
+  }, [cacheManager]);
 
   function addMap() {
     if (map.current) {
@@ -107,7 +123,6 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
       .bindPopup("<b>" + iconName + "</b>");
     if (saveForLater) {
       cacheManager?.addMarker(iconName, latlng, marker, false);
-      console.log(saveForLater);
     }
     setNumbOfCachesLeft();
   }
@@ -216,17 +231,11 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
       const iconName = selectedOption.split(" ");
       if (iconName.length == 2) {
         addCacheMarkers(currentPosition, iconName[1], true);
-        saveCoordsToLocalStorage(iconName[1], currentPosition.toString());
       } else {
         addCacheMarkers(currentPosition, selectedOption, true);
-        saveCoordsToLocalStorage(selectedOption, currentPosition.toString());
       }
     }
   };
-
-  function saveCoordsToLocalStorage(cacheName: string, coords: string) {
-    localStorage.setItem(cacheName, coords);
-  }
 
   function searchingPhase() {
     hideMarkers();
@@ -250,6 +259,11 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
       const latLngMarker = cacheManager?.getMarkerInfo(cacheName)?.latLng;
       if (latLngMarker) addCacheMarkers(latLngMarker, cacheName, false);
     }
+  }
+
+  function saveCachesToLocalStorage() {
+    const JSONobject = cacheManager?.convertToJSON();
+    if (JSONobject) localStorage.setItem("Geocaches", JSONobject);
   }
 
   return (

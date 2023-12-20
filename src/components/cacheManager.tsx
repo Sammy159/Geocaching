@@ -70,6 +70,31 @@ export default class CacheManager {
   isMarkerPresent(name: string): boolean {
     return this.markersDictionary.has(name);
   }
+
+  convertToJSON(): string {
+    const markerInfoArray = Array.from(this.markersDictionary.values()).map(
+      ({ marker, ...rest }) => rest
+    );
+    return JSON.stringify(markerInfoArray);
+  }
+
+  convertFromJSON(jsonString: string) {
+    const cacheManager = new CacheManager();
+    const markerInfoArray: MarkerInfo[] = JSON.parse(jsonString);
+
+    markerInfoArray.forEach((markerInfo) => {
+      const latLng = L.latLng(markerInfo.latLng.lat, markerInfo.latLng.lng);
+      const marker = L.marker(latLng);
+
+      cacheManager.addMarker(
+        markerInfo.name,
+        latLng,
+        marker,
+        markerInfo.found,
+        markerInfo.time ? new Date(markerInfo.time) : undefined
+      );
+    });
+  }
 }
 
 //Verwendung:
