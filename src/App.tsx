@@ -18,6 +18,7 @@ function App() {
   function showSeekingScreen() {
     setIsHiding(false);
     setNextScreen(true);
+    setQRresult("");
   }
   function backToHome() {
     setIsHiding(false);
@@ -34,6 +35,9 @@ function App() {
   function toggleQRReader() {
     setShowQRReader(!showQRReader); // Umschalten der Anzeige des QR-Lesers
   }
+  function foundIt() {
+    setQRresult("Wolke");
+  }
   return (
     <>
       <h1>Geocaching Amberg LGS</h1>
@@ -45,6 +49,7 @@ function App() {
       ) : (
         <>
           <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
+          <MyButton text={"Platziert"} onClick={foundIt}></MyButton>
           <button
             onClick={toggleQRReader}
             style={{ backgroundColor: "white", padding: "2px" }}

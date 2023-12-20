@@ -109,6 +109,7 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
       .bindPopup("<b>" + iconName + "</b>");
     if (saveForLater) {
       cacheManager?.addMarker(iconName, latlng, marker, false);
+      console.log(saveForLater);
     }
     setNumbOfCachesLeft();
   }
