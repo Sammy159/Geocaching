@@ -28,8 +28,6 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
   //State zum neu Rendern bei Veränderung der Nummen
   const [cachesLeft, setCachesLeft] = useState(0);
 
-  const [localQrResult, setLocalQrResult] = useState(qrResult);
-
   const iconDict: { [key: string]: string } = {
     Cafe: "./Icons/baseline_local_cafe_black_24dp.png",
     Blume: "./Icons/baseline_local_florist_black_24dp.png",
@@ -72,11 +70,11 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
 
   useEffect(() => {
     if (!isHiding) {
-      setLocalQrResult(qrResult); //??? geht net, wenn man localqr weiterverwenden möchte
-      console.log(localQrResult);
       foundCache(qrResult);
     } else {
-      handleCacheSelect(qrResult);
+      if (!cacheManager?.isMarkerPresent(qrResult)) {
+        handleCacheSelect(qrResult);
+      }
     }
   }, [qrResult]);
 
