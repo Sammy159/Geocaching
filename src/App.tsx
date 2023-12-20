@@ -47,7 +47,6 @@ function App() {
           <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
           <button
             onClick={toggleQRReader}
-            //className="myButton"
             style={{ backgroundColor: "white", padding: "2px" }}
           >
             <img src={qrIcon} alt="QR Leser" />

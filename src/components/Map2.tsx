@@ -71,11 +71,13 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
   }, []);
 
   useEffect(() => {
-    setLocalQrResult(qrResult);
-    //TODO:
-    //kapieren, dass Cache gefunde wurde
-    foundCache(localQrResult);
-    //Cache Daten aktualisieren
+    if (!isHiding) {
+      setLocalQrResult(qrResult); //??? geht net, wenn man localqr weiterverwenden möchte
+      console.log(localQrResult);
+      foundCache(qrResult);
+    } else {
+      handleCacheSelect(qrResult);
+    }
   }, [qrResult]);
 
   function addMap() {
@@ -90,7 +92,11 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
     }).addTo(map.current);
   }
 
-  function addCacheMarkers(latlng: L.LatLng, iconName: string) {
+  function addCacheMarkers(
+    latlng: L.LatLng,
+    iconName: string,
+    saveForLater: boolean
+  ) {
     const myIcon = L.icon({
       iconUrl: iconDict[iconName],
       iconSize: [markerWidth, markerHeight],
@@ -101,7 +107,9 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
     const marker = L.marker(latlng, { icon: myIcon })
       .addTo(map.current!)
       .bindPopup("<b>" + iconName + "</b>");
-    cacheManager?.addMarker(iconName, latlng, marker, false);
+    if (saveForLater) {
+      cacheManager?.addMarker(iconName, latlng, marker, false);
+    }
     setNumbOfCachesLeft();
   }
 
@@ -202,14 +210,18 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
   const handleCacheSelect = (selectedOption: any) => {
     //get current position
     let currentPosition = getCurrentPosition() || null;
-    const iconName = selectedOption.split(" ");
-    //add Marker to Map
     if (currentPosition) {
       //calc LatLon for Cache
       currentPosition["lat"] += 0.00003;
       currentPosition["lng"] += 0.00003;
-      addCacheMarkers(currentPosition, iconName[1]);
-      saveCoordsToLocalStorage(iconName[1], currentPosition.toString());
+      const iconName = selectedOption.split(" ");
+      if (iconName.length == 2) {
+        addCacheMarkers(currentPosition, iconName[1], true);
+        saveCoordsToLocalStorage(iconName[1], currentPosition.toString());
+      } else {
+        addCacheMarkers(currentPosition, selectedOption, true);
+        saveCoordsToLocalStorage(selectedOption, currentPosition.toString());
+      }
     }
   };
 
@@ -227,7 +239,7 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
     const allCacheNames = cacheManager?.getNames();
     allCacheNames?.forEach((name) => {
       const markerInfo = cacheManager?.getMarkerInfo(name);
-      markerInfo?.marker.setOpacity(100);
+      markerInfo?.marker.setOpacity(0);
     });
   }
 
@@ -236,7 +248,8 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
       //wenn Cache im CacheManager vorhanden ist
       cacheManager?.updateMarkerFoundStatus(cacheName, true);
       cacheManager?.updateMarkerTime(cacheName, new Date());
-      cacheManager?.getMarkerInfo(cacheName)?.marker.addTo(map.current!);
+      const latLngMarker = cacheManager?.getMarkerInfo(cacheName)?.latLng;
+      if (latLngMarker) addCacheMarkers(latLngMarker, cacheName, false);
     }
   }
 
