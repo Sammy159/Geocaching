@@ -14,15 +14,26 @@ let markerRef: L.Marker | null = null;
 interface MapProps {
   isHiding: boolean;
   qrResult: string;
+  radiusSetting: number;
+  doSprachausgabe: boolean;
+  walkingSpeed: number;
 }
 
-const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
+const LMap: React.FC<MapProps> = ({
+  isHiding,
+  qrResult,
+  radiusSetting,
+  doSprachausgabe,
+  walkingSpeed,
+}) => {
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
 
   const markerWidth: number = 25;
   const markerHeight: number = markerWidth;
-  const searchRadius: number = 50;
+  const [searchRadius, setSearchRadius] = useState<number>(50);
+  const [isSprachausgabeActive, setSprachausgabeActive] =
+    useState<boolean>(true);
 
   const cacheManager = useCacheManager();
   //State zum neu Rendern bei Veränderung der Nummen
@@ -51,7 +62,7 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
     }[]
   >([]);
   trackCoordinatesRef.current = MyGpxParser();
-  const intervalDelay = 2000;
+  const [intervalDelay, setIntervalDelay] = useState(walkingSpeed);
   let intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
   const [savedCaches, setSavedCaches] = useState(null);
@@ -79,6 +90,22 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
       }
     }
   }, [qrResult]);
+
+  useEffect(() => {
+    setSearchRadius(radiusSetting);
+    console.log("Radius");
+    console.log(searchRadius);
+  }, [radiusSetting]);
+
+  useEffect(() => {
+    setSprachausgabeActive(doSprachausgabe);
+  }, [doSprachausgabe]);
+
+  useEffect(() => {
+    setIntervalDelay(walkingSpeed);
+    console.log(intervalDelay);
+    //TODO: geänderte Geschwindigkeit wird nicht übernommen
+  }, [walkingSpeed]);
 
   useEffect(() => {
     // Versuchen, Daten aus dem LocalStorage zu holen
@@ -176,8 +203,10 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
                       .setContent("<p>Nah dran!<br />Cache" + name + "</p>")
                       .openOn(map.current);
                     //TTS
-                    var speech = new SpeechSynthesisUtterance(name);
-                    window.speechSynthesis.speak(speech);
+                    if (isSprachausgabeActive) {
+                      var speech = new SpeechSynthesisUtterance(name);
+                      window.speechSynthesis.speak(speech);
+                    }
                   }
                 }
               }
@@ -267,7 +296,7 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
   }
 
   return (
-    <>
+    <div style={{ position: "relative", zIndex: 0 }}>
       <div>
         Anzahl {isHiding ? "" : "noch"} versteckter Caches: {cachesLeft}
       </div>
@@ -275,7 +304,7 @@ const LMap: React.FC<MapProps> = ({ isHiding, qrResult }) => {
       <MyButton text={"Losgehen"} onClick={startWalk} />
       <MyButton text={"Pause"} onClick={pauseInterval} />
       {isHiding ? <Dropdown onSelect={handleCacheSelect} /> : null}
-    </>
+    </div>
   );
 };
 

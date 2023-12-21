@@ -20,6 +20,9 @@ function App() {
   const [showQRReader, setShowQRReader] = useState(false);
   const [qrResult, setQRresult] = useState<string>("");
   const [cacheList, setCacheList] = useState<CacheList[]>();
+  const [radiusSetting, setRadiusSetting] = useState<number>(50);
+  const [doSprachausgabe, setDoSprachausgabe] = useState(true);
+  const [walkingSpeed, setWalkingSpeed] = useState<number>(2000);
 
   function showHidingScreen() {
     setIsHiding(true);
@@ -48,6 +51,8 @@ function App() {
   useEffect(() => {
     const gespeicherteDaten = localStorage.getItem("Geocaches");
     if (gespeicherteDaten) {
+      console.log("gespeicherte Daten");
+      console.log(cacheList);
       setCacheList(JSON.parse(gespeicherteDaten));
     }
   }, []);
@@ -55,7 +60,13 @@ function App() {
   return (
     <>
       <h1>Geocaching Amberg LGS</h1>
-      <SettingsMenu cacheList={cacheList}></SettingsMenu>
+      <SettingsMenu
+        cacheList={cacheList}
+        setRadiusSetting={setRadiusSetting}
+        setDoSprachausgabe={setDoSprachausgabe}
+        doSprachausgabe={doSprachausgabe}
+        setWalkingSpeed={setWalkingSpeed}
+      ></SettingsMenu>
       {!showNextScreen ? (
         <>
           <MyButton text={"Verstecken"} onClick={showHidingScreen}></MyButton>
@@ -77,7 +88,13 @@ function App() {
           ></QrReader>
         )}
       {showNextScreen ? (
-        <LMap isHiding={isHiding} qrResult={qrResult}></LMap>
+        <LMap
+          isHiding={isHiding}
+          qrResult={qrResult}
+          radiusSetting={radiusSetting}
+          doSprachausgabe={doSprachausgabe}
+          walkingSpeed={walkingSpeed}
+        ></LMap>
       ) : null}
     </>
   );
