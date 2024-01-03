@@ -96,21 +96,3 @@ export default class CacheManager {
     });
   }
 }
-
-//Verwendung:
-
-/* // AndereDatei.ts
-import { MarkerManager } from './MarkerManager';
-
-const markerManager = new MarkerManager();
-
-// Fügen Sie einen Marker hinzu
-markerManager.addMarker("Marker1", 40.7128, -74.0060, false);
-
-// Abrufen der Marker-Informationen
-const markerInfo = markerManager.getMarkerInfo("Marker1");
-console.log(markerInfo);
-
-// Aktualisieren des Gefunden-Status
-markerManager.updateMarkerFoundStatus("Marker1", true);
- */

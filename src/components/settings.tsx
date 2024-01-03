@@ -99,9 +99,10 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
               <button
                 type="button"
                 className="iconButton"
-                onClick={() =>
-                  setRadiusSetting(Number(radiusInputRef.current?.value))
-                }
+                onClick={() => {
+                  setRadiusSetting(Number(radiusInputRef.current?.value));
+                  console.log(Number(radiusInputRef.current?.value));
+                }}
               >
                 <img src={doneIcon} alt="Done" />
               </button>
@@ -120,6 +121,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
               }}
             ></input>
           </label>
+          <br></br>
           <label
             htmlFor="speed"
             onClick={() => setOpenSpeedInput(!openSpeedInput)}
@@ -146,6 +148,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
               </button>
             </>
           ) : null}
+          <br></br>
           <DownloadGPXFileLink></DownloadGPXFileLink>
         </div>
       </Popup>

@@ -93,8 +93,6 @@ const LMap: React.FC<MapProps> = ({
 
   useEffect(() => {
     setSearchRadius(radiusSetting);
-    console.log("Radius");
-    console.log(searchRadius);
   }, [radiusSetting]);
 
   useEffect(() => {
@@ -113,7 +111,6 @@ const LMap: React.FC<MapProps> = ({
 
     if (gespeicherteDaten) {
       setSavedCaches(JSON.parse(gespeicherteDaten));
-      console.log(savedCaches);
     }
   }, []);
 
@@ -269,7 +266,6 @@ const LMap: React.FC<MapProps> = ({
   function searchingPhase() {
     hideMarkers();
     setNumbOfCachesLeft();
-    console.log("searchingPhase");
   }
 
   function hideMarkers() {
