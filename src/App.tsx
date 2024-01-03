@@ -1,3 +1,4 @@
+import L from "leaflet";
 import "./App.css";
 import "./components/button.css";
 import MyButton from "./components/Button";
@@ -6,6 +7,7 @@ import { useEffect, useState } from "react";
 import QrReader from "./components/QRCodeReader";
 import qrIcon from "/Icons/outline_qr_code_scanner_black_24dp.png";
 import SettingsMenu from "./components/settings";
+import { useCacheManager } from "./context/CacheManagerContext";
 
 function App() {
   interface CacheList {
@@ -15,14 +17,14 @@ function App() {
     time: Date;
   }
 
+  const cacheManager = useCacheManager();
   const [isHiding, setIsHiding] = useState(false);
   const [showNextScreen, setNextScreen] = useState(false);
   const [showQRReader, setShowQRReader] = useState(false);
   const [qrResult, setQRresult] = useState<string>("");
-  const [cacheList, setCacheList] = useState<CacheList[]>();
+  const [cacheList, setCacheList] = useState<CacheList[]>([]);
   const [radiusSetting, setRadiusSetting] = useState<number>(50);
   const [doSprachausgabe, setDoSprachausgabe] = useState(true);
-  const [walkingSpeed, setWalkingSpeed] = useState<number>(2000);
 
   function showHidingScreen() {
     setIsHiding(true);
@@ -50,11 +52,41 @@ function App() {
   }
   useEffect(() => {
     const gespeicherteDaten = localStorage.getItem("Geocaches");
-    if (gespeicherteDaten) {
-      console.log("gespeicherte Daten");
-      setCacheList(JSON.parse(gespeicherteDaten));
-      //todo: in cache manager speichern, villt durch button
-      console.log(cacheList);
+    if (
+      gespeicherteDaten !== "undefined" &&
+      typeof gespeicherteDaten !== "undefined"
+    ) {
+      console.log(cacheManager);
+      console.log(gespeicherteDaten);
+      if (gespeicherteDaten) {
+        const cacheList: CacheList[] = [];
+        const cacheListTemp = JSON.parse(gespeicherteDaten);
+
+        cacheListTemp.forEach((element: any) => {
+          const cacheItem: CacheList = {
+            name: element.name,
+            latLng: element.latLng,
+            found: element.found,
+            time: element.time,
+          };
+          cacheList.push(cacheItem);
+
+          //Wieder in den CacheManager speichern
+          const latLng = L.latLng(element.latLng.lat, element.latLng.lng);
+          const marker = L.marker(latLng);
+          cacheManager?.addMarker(
+            element.name,
+            latLng,
+            marker,
+            element.found,
+            element.time ? new Date(element.time) : undefined
+          );
+        });
+        setCacheList(cacheList);
+
+        console.log(cacheManager);
+      }
+      //todo: in cache manager speichern geht noch nicht!!
     }
   }, []);
 
@@ -66,7 +98,6 @@ function App() {
         setRadiusSetting={setRadiusSetting}
         setDoSprachausgabe={setDoSprachausgabe}
         doSprachausgabe={doSprachausgabe}
-        setWalkingSpeed={setWalkingSpeed}
       ></SettingsMenu>
       {!showNextScreen ? (
         <>
@@ -94,7 +125,6 @@ function App() {
           qrResult={qrResult}
           radiusSetting={radiusSetting}
           doSprachausgabe={doSprachausgabe}
-          walkingSpeed={walkingSpeed}
         ></LMap>
       ) : null}
     </>

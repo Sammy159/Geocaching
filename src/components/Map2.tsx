@@ -16,7 +16,6 @@ interface MapProps {
   qrResult: string;
   radiusSetting: number;
   doSprachausgabe: boolean;
-  walkingSpeed: number;
 }
 
 const LMap: React.FC<MapProps> = ({
@@ -24,7 +23,6 @@ const LMap: React.FC<MapProps> = ({
   qrResult,
   radiusSetting,
   doSprachausgabe,
-  walkingSpeed,
 }) => {
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
@@ -62,7 +60,7 @@ const LMap: React.FC<MapProps> = ({
     }[]
   >([]);
   trackCoordinatesRef.current = MyGpxParser();
-  const [intervalDelay, setIntervalDelay] = useState(walkingSpeed);
+  const intervalDelay = 1000;
   let intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
   const [savedCaches, setSavedCaches] = useState(null);
@@ -98,21 +96,6 @@ const LMap: React.FC<MapProps> = ({
   useEffect(() => {
     setSprachausgabeActive(doSprachausgabe);
   }, [doSprachausgabe]);
-
-  useEffect(() => {
-    setIntervalDelay(walkingSpeed);
-    console.log(intervalDelay);
-    //TODO: geänderte Geschwindigkeit wird nicht übernommen
-  }, [walkingSpeed]);
-
-  useEffect(() => {
-    // Versuchen, Daten aus dem LocalStorage zu holen
-    const gespeicherteDaten = localStorage.getItem("Geocaches");
-
-    if (gespeicherteDaten) {
-      setSavedCaches(JSON.parse(gespeicherteDaten));
-    }
-  }, []);
 
   useEffect(() => {
     saveCachesToLocalStorage();

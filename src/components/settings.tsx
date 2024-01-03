@@ -19,7 +19,6 @@ interface SettingsMenuProps {
   setRadiusSetting: (numbr: number) => void;
   setDoSprachausgabe: (bool: boolean) => void;
   doSprachausgabe: boolean;
-  setWalkingSpeed: (numb: number) => void;
 }
 
 const SettingsMenu: React.FC<SettingsMenuProps> = ({
@@ -27,7 +26,6 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   setRadiusSetting,
   setDoSprachausgabe,
   doSprachausgabe,
-  setWalkingSpeed,
 }) => {
   const divStyle = {
     color: "black",
@@ -37,16 +35,9 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   const [openRadiusInput, setOpenRadiusInput] = useState(false);
   const [sprachausgabe, setSprachausgabe] = useState(doSprachausgabe);
   const radiusInputRef = useRef<HTMLInputElement>(null);
-  const speedInputRef = useRef<HTMLInputElement>(null);
-  const [openSpeedInput, setOpenSpeedInput] = useState(false);
-  const [speedOfWalk, setSpeedOfWalk] = useState<number>(2000);
   const closeModal = () => setOpen(false);
 
   function showCacheList() {
-    if (cacheList) {
-      console.log("Settings Cacheliste");
-      console.log(cacheList);
-    }
     closeModal();
     setOpenList(true);
   }
@@ -54,10 +45,6 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   useEffect(() => {
     setDoSprachausgabe(sprachausgabe);
   }, [sprachausgabe]);
-
-  useEffect(() => {
-    setWalkingSpeed(speedOfWalk);
-  }, [speedOfWalk]);
 
   return (
     <div style={{ position: "relative" }}>
@@ -85,7 +72,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
             htmlFor="radius"
             onClick={() => setOpenRadiusInput(!openRadiusInput)}
           >
-            Radius
+            Radius ändern
           </label>
           <br></br>
           {openRadiusInput ? (
@@ -121,33 +108,6 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
               }}
             ></input>
           </label>
-          <br></br>
-          <label
-            htmlFor="speed"
-            onClick={() => setOpenSpeedInput(!openSpeedInput)}
-          >
-            Gehgeschwindigkeit
-          </label>
-          <br></br>
-          {openSpeedInput ? (
-            <>
-              <input
-                type="number"
-                id="speed"
-                name="speed"
-                ref={speedInputRef}
-              ></input>
-              <button
-                type="button"
-                className="iconButton"
-                onClick={() =>
-                  setSpeedOfWalk(Number(speedInputRef.current?.value))
-                }
-              >
-                <img src={doneIcon} alt="Done" />
-              </button>
-            </>
-          ) : null}
           <br></br>
           <DownloadGPXFileLink></DownloadGPXFileLink>
         </div>

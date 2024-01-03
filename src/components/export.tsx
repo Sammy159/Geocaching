@@ -25,8 +25,6 @@ const createXmlString = (): string => {
 
   result += wptTag;
   result += "</gpx>";
-  console.log("export function");
-  console.log(result);
   return result;
 };
 
