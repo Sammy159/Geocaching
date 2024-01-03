@@ -1,28 +1,45 @@
-const createXmlString = (points: number[][]): string => {
+import { useCacheManager } from "../context/CacheManagerContext";
+
+const createXmlString = (): string => {
+  const cacheManager = useCacheManager();
+
   let result =
-    '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="runtracker"><metadata/><trk><name></name><desc></desc>';
+    '<?xml version="1.0" encoding="UTF-8" standalone="no" ?><gpx version="1.1" creator="Rubenbauer Franziska">';
 
-  let segmentTag = "<trkseg>";
-  segmentTag += points
-    .map((point) => `<trkpt lat="${point[1]}" lon="${point[0]}"></trkpt>`)
-    .join("");
-  segmentTag += "</trkseg>";
+  let wptTag = "";
+  const names = cacheManager?.getNames();
+  if (names) {
+    names.forEach(function (name) {
+      const cache = cacheManager?.getMarkerInfo(name);
+      const latLng = cache?.latLng;
+      wptTag = `<wpt lat="${latLng?.lat}" lon="${latLng?.lng}"> <name> ${cache?.name} </name>`;
+      if (cache?.found) {
+        wptTag += `<desc>gefunden</desc>`;
+        wptTag += `<time> ${cache?.time} </time>`;
+      } else {
+        wptTag += `<desc>nicht gefunden</desc>`;
+      }
+      wptTag += `</wpt>`;
+    });
+  }
 
-  result += segmentTag;
-  result += "</trk></gpx>";
-
+  result += wptTag;
+  result += "</gpx>";
+  console.log("export function");
+  console.log(result);
   return result;
 };
 
-const downloadGpxFile = (points: number[][], numberCaches: number) => {
-  const units = "gespeicherte Caches";
-  const xml = createXmlString(points);
-  const url = "data:text/json;charset=utf-8," + xml;
-  const link = document.createElement("a");
-  link.download = `${numberCaches}-${units}.gpx`;
-  link.href = url;
-  document.body.appendChild(link);
-  link.click();
+const DownloadGPXFileLink = () => {
+  const xml = createXmlString();
+  const url = "data:text/json;charset=utf-8," + encodeURIComponent(xml);
+  const myFilename = `GespeicherteCaches.gpx`;
+
+  return (
+    <a download={myFilename} href={url}>
+      GPX-Datei herunterladen
+    </a>
+  );
 };
 
-export default downloadGpxFile;
+export default DownloadGPXFileLink;

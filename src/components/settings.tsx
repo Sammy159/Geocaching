@@ -5,6 +5,7 @@ import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import "./button.css";
 import CacheListPopup from "./CacheList";
+import DownloadGPXFileLink from "./export";
 
 interface CacheList {
   name: string;
@@ -145,7 +146,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
               </button>
             </>
           ) : null}
-          <div> Exportieren</div>
+          <DownloadGPXFileLink></DownloadGPXFileLink>
         </div>
       </Popup>
 

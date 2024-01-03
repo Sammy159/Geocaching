@@ -52,8 +52,9 @@ function App() {
     const gespeicherteDaten = localStorage.getItem("Geocaches");
     if (gespeicherteDaten) {
       console.log("gespeicherte Daten");
-      console.log(cacheList);
       setCacheList(JSON.parse(gespeicherteDaten));
+      //todo: in cache manager speichern, villt durch button
+      console.log(cacheList);
     }
   }, []);
 
