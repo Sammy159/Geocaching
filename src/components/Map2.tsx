@@ -63,7 +63,7 @@ const LMap: React.FC<MapProps> = ({
   const intervalDelay = 1000;
   let intervalIdRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [savedCaches, setSavedCaches] = useState(null);
+  //const [savedCaches, setSavedCaches] = useState(null);
 
   const figureIcon = L.icon({
     iconUrl: "./Icons/baseline_directions_walk_black_24dp.png",
