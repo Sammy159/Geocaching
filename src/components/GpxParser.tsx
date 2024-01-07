@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { XMLParser } from "fast-xml-parser";
 
+/**
+ * A React component that fetches and parses GPX XML data into an array of coordinates.
+ * @returns {Array<{ lat: number, lon: number }>} - An array of latitude and longitude coordinates.
+ */
 const MyGpxParser = () => {
   const [coordinates, setCoordinates] = useState<
     {
@@ -10,6 +14,9 @@ const MyGpxParser = () => {
   >([]);
 
   useEffect(() => {
+    /**
+     * Fetches and parses the GPX XML content.
+     */
     const fetchDataAndParse = async () => {
       try {
         const content = await fetchXMLContent();
@@ -33,7 +40,7 @@ const MyGpxParser = () => {
           setCoordinates(parsedCoordinates);
         }
       } catch (error) {
-        console.error("Fehler beim Laden und Parsen der XML-Datei:", error);
+        console.error("Error fetching and parsing XML file:", error);
       }
     };
 
@@ -45,17 +52,18 @@ const MyGpxParser = () => {
 
 export default MyGpxParser;
 
+/**
+ * Fetches the GPX XML content from a file.
+ * @returns {Promise<string | null>} - The XML content as a string or null if there's an error.
+ */
 const fetchXMLContent = async () => {
   try {
     const response = await fetch("../../gartenschau.gpx");
     const xmlText = await response.text();
 
-    //const parser = new DOMParser();
-    //const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-
     return xmlText;
   } catch (error) {
-    console.error("Fehler beim Laden der XML-Datei:", error);
+    console.error("Error fetching the XML file:", error);
     return null;
   }
 };

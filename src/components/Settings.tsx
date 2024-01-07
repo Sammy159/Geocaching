@@ -5,7 +5,7 @@ import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import "./button.css";
 import CacheListPopup from "./CacheList";
-import DownloadGPXFileLink from "./export";
+import DownloadGPXFileLink from "./ExportToFile";
 
 interface CacheList {
   name: string;

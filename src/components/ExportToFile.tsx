@@ -1,8 +1,11 @@
 import { useCacheManager } from "../context/CacheManagerContext";
 
+/**
+ * Creates an XML string in GPX format based on cache information.
+ * @returns {string} - The XML string in GPX format.
+ */
 const createXmlString = (): string => {
   const cacheManager = useCacheManager();
-
   let result =
     '<?xml version="1.0" encoding="UTF-8" standalone="no" ?><gpx version="1.1" creator="Rubenbauer Franziska">';
 
@@ -28,14 +31,17 @@ const createXmlString = (): string => {
   return result;
 };
 
+/**
+ * A React component that generates a GPX file download link based on cache information.
+ */
 const DownloadGPXFileLink = () => {
   const xml = createXmlString();
   const url = "data:text/json;charset=utf-8," + encodeURIComponent(xml);
-  const myFilename = `GespeicherteCaches.gpx`;
+  const myFilename = `SavedCaches.gpx`;
 
   return (
     <a download={myFilename} href={url}>
-      GPX-Datei herunterladen
+      Download GPX File
     </a>
   );
 };

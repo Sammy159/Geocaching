@@ -18,6 +18,11 @@ interface MapProps {
   doSprachausgabe: boolean;
 }
 
+/**
+ * The LMap component renders a Leaflet map and handles caching-related functionality.
+ * @param {MapProps} props - The properties for the LMap component.
+ * @returns {JSX.Element} - The rendered LMap component.
+ */
 const LMap: React.FC<MapProps> = ({
   isHiding,
   qrResult,
@@ -101,6 +106,9 @@ const LMap: React.FC<MapProps> = ({
     saveCachesToLocalStorage();
   }, [cacheManager]);
 
+  /**
+   * Adds a Leaflet map to the current DOM element if it doesn't already exist.
+   */
   function addMap() {
     if (map.current) {
       return;
@@ -113,6 +121,12 @@ const LMap: React.FC<MapProps> = ({
     }).addTo(map.current);
   }
 
+  /**
+   * Adds cache markers to the map.
+   * @param {L.LatLng} latlng - The cache's latitude and longitude.
+   * @param {string} iconName - The icon name for the cache.
+   * @param {boolean} saveForLater - Indicates whether to save the cache for later.
+   */
   function addCacheMarkers(
     latlng: L.LatLng,
     iconName: string,
@@ -134,11 +148,17 @@ const LMap: React.FC<MapProps> = ({
     setNumbOfCachesLeft();
   }
 
+  /**
+   * Sets the number of hidden caches in the state.
+   */
   function setNumbOfCachesLeft() {
     const numb = cacheManager?.getNumberOfHidden();
     if (numb) setCachesLeft(numb);
   }
 
+  /**
+   * Loads a GPX track and adds it to the map.
+   */
   function loadGPXTrack() {
     if (map.current) {
       const gpxFile = "/gartenschau.gpx";
@@ -159,6 +179,9 @@ const LMap: React.FC<MapProps> = ({
     }
   }
 
+  /**
+   * Starts the walking interval for tracking and interacting with caches.
+   */
   function startWalk() {
     if (intervalIdRef.current === null) {
       intervalIdRef.current = setInterval(() => {
@@ -219,6 +242,9 @@ const LMap: React.FC<MapProps> = ({
     }
   }
 
+  /**
+   * Pauses the walking interval.
+   */
   function pauseInterval() {
     if (intervalIdRef.current !== null) {
       clearInterval(intervalIdRef.current);
@@ -226,10 +252,18 @@ const LMap: React.FC<MapProps> = ({
     }
   }
 
+  /**
+   * Gets the current position of the user.
+   * @returns {L.LatLng | null} - The current position as a LatLng object or null if not available.
+   */
   function getCurrentPosition() {
     return markerRef?.getLatLng();
   }
 
+  /**
+   * Handles the selection of a cache from the dropdown.
+   * @param {any} selectedOption - The selected cache option.
+   */
   const handleCacheSelect = (selectedOption: any) => {
     //get current position
     let currentPosition = getCurrentPosition() || null;
@@ -246,11 +280,17 @@ const LMap: React.FC<MapProps> = ({
     }
   };
 
+  /**
+   * Initiates the searching phase by hiding cache markers.
+   */
   function searchingPhase() {
     hideMarkers();
     setNumbOfCachesLeft();
   }
 
+  /**
+   * Hides cache markers on the map.
+   */
   function hideMarkers() {
     const allCacheNames = cacheManager?.getNames();
     allCacheNames?.forEach((name) => {
@@ -259,6 +299,10 @@ const LMap: React.FC<MapProps> = ({
     });
   }
 
+  /**
+   * Marks a cache as found and updates its status on the map.
+   * @param {string} cacheName - The name of the found cache.
+   */
   function foundCache(cacheName: string) {
     if (cacheManager?.isMarkerPresent(cacheName)) {
       //wenn Cache im CacheManager vorhanden ist
@@ -269,6 +313,9 @@ const LMap: React.FC<MapProps> = ({
     }
   }
 
+  /**
+   * Saves the caches in JSON format to local storage.
+   */
   function saveCachesToLocalStorage() {
     const JSONobject = cacheManager?.convertToJSON();
     if (JSONobject) localStorage.setItem("Geocaches", JSONobject);

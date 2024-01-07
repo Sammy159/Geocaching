@@ -1,14 +1,33 @@
+/**
+ * Interface representing an individual cache in the cache list.
+ */
 interface CacheList {
-  name: string;
-  latLng: L.LatLng;
-  found: boolean;
-  time: Date;
+  name: string; // The name of the cache.
+  latLng: L.LatLng; // The geographical coordinates of the cache.
+  found: boolean; // A boolean indicating whether the cache has been found.
+  time: Date; // The date and time of the cache entry.
 }
+
+/**
+ * Interface properties for the ListMenu component.
+ */
 interface ListMenuProps {
+  /**
+   * An array of CacheList objects to be displayed in the list.
+   */
   cacheList: CacheList[] | undefined;
+
+  /**
+   * A function called to open or close the state of the list.
+   * @param open - A boolean value indicating whether to open or close the list.
+   */
   setOpenList: (open: boolean) => void;
 }
 
+/**
+ * A React component for displaying a popup list of caches.
+ * @param {ListMenuProps} props - The properties for the CacheListPopup component.
+ */
 const CacheListPopup: React.FC<ListMenuProps> = ({
   cacheList,
   setOpenList,

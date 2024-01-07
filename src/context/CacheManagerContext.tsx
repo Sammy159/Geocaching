@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import CacheManager from "../components/cacheManager";
+import CacheManager from "../components/CacheManager";
 
 const CacheManagerContext = createContext<CacheManager | null>(null);
 

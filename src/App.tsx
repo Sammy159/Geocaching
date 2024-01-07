@@ -6,7 +6,7 @@ import LMap from "./components/Map2";
 import { useEffect, useState } from "react";
 import QrReader from "./components/QRCodeReader";
 import qrIcon from "/Icons/outline_qr_code_scanner_black_24dp.png";
-import SettingsMenu from "./components/settings";
+import SettingsMenu from "./components/Settings";
 import { useCacheManager } from "./context/CacheManagerContext";
 
 function App() {
@@ -72,8 +72,6 @@ function App() {
           //Wieder in den CacheManager speichern
           const latLng = L.latLng(element.latLng.lat, element.latLng.lng);
           const marker = L.marker(latLng);
-          console.log("1");
-          console.log(cacheManager);
           cacheManager?.addMarker(
             element.name,
             latLng,
@@ -83,10 +81,7 @@ function App() {
           );
         });
         setCacheList(cacheList);
-        console.log("2");
-        console.log(cacheManager);
       }
-      //todo: in cache manager speichern geht noch nicht!!
     }
   }, []);
 
