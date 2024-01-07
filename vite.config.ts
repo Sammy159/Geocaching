@@ -17,9 +17,10 @@ export default defineConfig({
         start_url: ".",
         icons: [
           {
-            src: "/icon-landscape.jpg",
-            sizes: "512x512",
+            src: "/icon-geocaching.png",
+            sizes: "1024x1024",
             type: "image/png",
+            purpose: "any maskable",
           },
         ],
       },
