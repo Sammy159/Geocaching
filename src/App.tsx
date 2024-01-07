@@ -56,8 +56,6 @@ function App() {
       gespeicherteDaten !== "undefined" &&
       typeof gespeicherteDaten !== "undefined"
     ) {
-      console.log(cacheManager);
-      console.log(gespeicherteDaten);
       if (gespeicherteDaten) {
         const cacheList: CacheList[] = [];
         const cacheListTemp = JSON.parse(gespeicherteDaten);
@@ -74,16 +72,18 @@ function App() {
           //Wieder in den CacheManager speichern
           const latLng = L.latLng(element.latLng.lat, element.latLng.lng);
           const marker = L.marker(latLng);
+          console.log("1");
+          console.log(cacheManager);
           cacheManager?.addMarker(
             element.name,
             latLng,
             marker,
             element.found,
-            element.time ? new Date(element.time) : undefined
+            element.time ? new Date(element.time) : new Date()
           );
         });
         setCacheList(cacheList);
-
+        console.log("2");
         console.log(cacheManager);
       }
       //todo: in cache manager speichern geht noch nicht!!

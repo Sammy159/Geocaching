@@ -1,18 +1,21 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import CacheManager from "../components/cacheManager";
 
-// Definieren des Typs für den Context
 const CacheManagerContext = createContext<CacheManager | null>(null);
 
 export const CacheManagerProvider = ({ children }: any) => {
-  // Definieren des Typs für useState
   const [cacheManager, setCacheManager] = useState<CacheManager | null>(null);
 
   useEffect(() => {
-    // Initialisierung des CacheManagers
     const cm = new CacheManager();
     setCacheManager(cm);
   }, []);
+
+  // Hier wird überprüft, ob der cacheManager initialisiert ist, bevor er children rendert
+  if (cacheManager === null) {
+    // Hier könnten Sie eine Ladeanzeige oder eine andere Art von Warteindikator anzeigen
+    return <div>Loading...</div>;
+  }
 
   return (
     <CacheManagerContext.Provider value={cacheManager}>

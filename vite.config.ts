@@ -17,8 +17,8 @@ export default defineConfig({
         start_url: ".",
         icons: [
           {
-            src: "/icon-geocaching.png",
-            sizes: "1024x1024",
+            src: "/icon-geocaching_x128.png",
+            sizes: "128x128",
             type: "image/png",
             purpose: "any maskable",
           },
