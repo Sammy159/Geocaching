@@ -1,11 +1,29 @@
 .myButton {
-  width: 120px;
-  height: 50px;
-  background-color: grey;
-  margin: 5px;
+  padding: 0.6em 1.2em;
+  width: 40%;
+  height: 80%;
+  margin: 3%;
+  color: black;
+  background-image: linear-gradient(to bottom, #f7ecd1, #c2a373);
 }
 
 .iconButton {
-  background-color: white;
-  padding: 2px;
+  padding: 0.6em;
+  border-radius: 50%;
+  width: 10vw;
+  height: 10vw;
+  margin: 3%;
+  text-align: left;
+  background-image: linear-gradient(to bottom, #f7ecd1, #c2a373);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+#settings {
+  background-image: url("public/Icons/baseline_settings_black_24dp.png");
+}
+
+#qr {
+  background-image: url("public/Icons/outline_qr_code_scanner_black_24dp.png");
 }

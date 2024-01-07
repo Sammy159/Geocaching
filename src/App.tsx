@@ -88,25 +88,14 @@ function App() {
   return (
     <>
       <h1>Geocaching Amberg LGS</h1>
-      <SettingsMenu
-        cacheList={cacheList}
-        setRadiusSetting={setRadiusSetting}
-        setDoSprachausgabe={setDoSprachausgabe}
-        doSprachausgabe={doSprachausgabe}
-      ></SettingsMenu>
       {!showNextScreen ? (
-        <>
-          <MyButton text={"Verstecken"} onClick={showHidingScreen}></MyButton>
-          <MyButton text={"Suchen"} onClick={showSeekingScreen}></MyButton>
-        </>
-      ) : (
-        <>
-          <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
-          <button onClick={toggleQRReader} className="iconButton">
-            <img src={qrIcon} alt="QR Leser" />
-          </button>
-        </>
-      )}
+        <img
+          src="public/compass.png"
+          alt="compass"
+          className="compassDiv"
+        ></img>
+      ) : null}
+
       {showNextScreen &&
         showQRReader && ( // QR-Leser nur anzeigen, wenn showNextScreen und showQRReader true sind
           <QrReader
@@ -122,6 +111,29 @@ function App() {
           doSprachausgabe={doSprachausgabe}
         ></LMap>
       ) : null}
+      <div className="bottom-div">
+        <div className="gradient-div">
+          {!showNextScreen ? (
+            <MyButton text={"Verstecken"} onClick={showHidingScreen}></MyButton>
+          ) : (
+            <>
+              <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
+              <button onClick={toggleQRReader} className="iconButton" id="qr">
+                {/*<img src={qrIcon} alt="QR Leser" style={{ height: "100%" }} />*/}
+              </button>
+            </>
+          )}
+          <SettingsMenu
+            cacheList={cacheList}
+            setRadiusSetting={setRadiusSetting}
+            setDoSprachausgabe={setDoSprachausgabe}
+            doSprachausgabe={doSprachausgabe}
+          ></SettingsMenu>
+          {!showNextScreen ? (
+            <MyButton text={"Suchen"} onClick={showSeekingScreen}></MyButton>
+          ) : null}
+        </div>
+      </div>
     </>
   );
 }

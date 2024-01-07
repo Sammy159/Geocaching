@@ -47,13 +47,14 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   }, [sprachausgabe]);
 
   return (
-    <div style={{ position: "relative" }}>
+    <>
       <button
         type="button"
         className="iconButton"
+        id="settings"
         onClick={() => setOpen((o) => !o)}
       >
-        <img src={settingsIcon} alt="Settings" />
+        {/*<img src={settingsIcon} alt="Settings" style={{ height: "100%" }} />*/}
       </button>
       <Popup
         open={open}
@@ -119,7 +120,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
           setOpenList={setOpenList}
         ></CacheListPopup>
       ) : null}
-    </div>
+    </>
   );
 };
 
