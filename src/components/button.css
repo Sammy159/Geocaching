@@ -21,9 +21,9 @@
 }
 
 #settings {
-  background-image: url("public/Icons/baseline_settings_black_24dp.png");
+  background-image: url("/Icons/baseline_settings_black_24dp.png");
 }
 
 #qr {
-  background-image: url("public/Icons/outline_qr_code_scanner_black_24dp.png");
+  background-image: url("/Icons/outline_qr_code_scanner_black_24dp.png");
 }

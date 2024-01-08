@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import QrReader from "./components/QRCodeReader";
 import SettingsMenu from "./components/Settings";
 import { useCacheManager } from "./context/CacheManagerContext";
+import compassIcon from "/compass.png";
 
 function App() {
   interface CacheList {
@@ -97,11 +98,7 @@ function App() {
         </h1>
       </div>
       {!showNextScreen ? (
-        <img
-          src="public/compass.png"
-          alt="compass"
-          className="compassDiv"
-        ></img>
+        <img src={compassIcon} alt="compass" className="compassDiv"></img>
       ) : null}
 
       {showNextScreen &&
