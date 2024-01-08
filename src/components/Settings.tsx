@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import settingsIcon from "/Icons/baseline_settings_black_24dp.png";
 import doneIcon from "/Icons/baseline_done_black_24dp.png";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";

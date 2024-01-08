@@ -10,6 +10,17 @@
   height: 100%;
 }
 
+.top-div {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background-color: #666f38;
+  background-image: linear-gradient(to bottom, #f7ecd1, #c2a373);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
 .bottom-div {
   position: absolute;
   width: 100%;
@@ -17,7 +28,7 @@
   bottom: 0;
   background-color: #666f38;
 }
-.gradient-div {
+.flexbox-bottom {
   width: 100%;
   height: 100%;
   display: flex;

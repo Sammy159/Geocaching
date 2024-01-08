@@ -2,10 +2,9 @@ import L from "leaflet";
 import "./App.css";
 import "./components/button.css";
 import MyButton from "./components/Button";
-import LMap from "./components/Map2";
+import LMap from "./components/Map";
 import { useEffect, useState } from "react";
 import QrReader from "./components/QRCodeReader";
-import qrIcon from "/Icons/outline_qr_code_scanner_black_24dp.png";
 import SettingsMenu from "./components/Settings";
 import { useCacheManager } from "./context/CacheManagerContext";
 
@@ -87,7 +86,16 @@ function App() {
 
   return (
     <>
-      <h1>Geocaching Amberg LGS</h1>
+      <div className="top-div">
+        <h1
+          style={{
+            color: "black",
+            fontWeight: "bold",
+          }}
+        >
+          Geocaching Amberg LGS
+        </h1>
+      </div>
       {!showNextScreen ? (
         <img
           src="public/compass.png"
@@ -112,7 +120,7 @@ function App() {
         ></LMap>
       ) : null}
       <div className="bottom-div">
-        <div className="gradient-div">
+        <div className="flexbox-bottom">
           {!showNextScreen ? (
             <MyButton text={"Verstecken"} onClick={showHidingScreen}></MyButton>
           ) : (

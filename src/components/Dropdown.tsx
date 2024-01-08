@@ -42,13 +42,13 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect }) => {
 
   return (
     <div>
-      <label>Choose a cache:</label>
+      <label style={{ color: "black" }}>Wähle einen Cache</label>
       <select
         value={selectedOption || ""}
         onChange={(e) => handleSelect(e.target.value)}
       >
         <option value="" disabled>
-          Select a cache
+          Cache
         </option>
         {options.map((option) => (
           <option key={option} value={option}>

@@ -322,8 +322,15 @@ const LMap: React.FC<MapProps> = ({
   }
 
   return (
-    <div style={{ position: "relative", zIndex: 0 }}>
-      <div>
+    <div
+      style={{
+        position: "relative",
+        zIndex: 0,
+        width: "100%",
+        backgroundColor: "#a0b9ac",
+      }}
+    >
+      <div style={{ color: "black" }}>
         Anzahl {isHiding ? "" : "noch"} versteckter Caches: {cachesLeft}
       </div>
       <div id="map"></div>
