@@ -117,6 +117,7 @@ function App() {
           qrResult={qrResult}
           radiusSetting={radiusSetting}
           doSprachausgabe={doSprachausgabe}
+          setCacheList={setCacheList}
         ></LMap>
       ) : null}
       <div className="bottom-div">

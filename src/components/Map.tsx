@@ -11,11 +11,19 @@ import L, { Map } from "leaflet";
 
 let markerRef: L.Marker | null = null;
 
+interface CacheList {
+  name: string;
+  latLng: L.LatLng;
+  found: boolean;
+  time: Date;
+}
+
 interface MapProps {
   isHiding: boolean;
   qrResult: string;
   radiusSetting: number;
   doSprachausgabe: boolean;
+  setCacheList: (list: CacheList[]) => void;
 }
 
 /**
@@ -28,6 +36,7 @@ const LMap: React.FC<MapProps> = ({
   qrResult,
   radiusSetting,
   doSprachausgabe,
+  setCacheList,
 }) => {
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
@@ -105,6 +114,25 @@ const LMap: React.FC<MapProps> = ({
   useEffect(() => {
     saveCachesToLocalStorage();
   }, [cacheManager]);
+
+  useEffect(() => {
+    const cacheList: CacheList[] = [];
+    const cacheNames = cacheManager?.getNames();
+
+    cacheNames?.forEach((name: any) => {
+      const infos = cacheManager?.getMarkerInfo(name);
+      if (infos) {
+        const cacheItem: CacheList = {
+          name: infos.name,
+          latLng: infos.latLng,
+          found: infos.found,
+          time: infos.time ? new Date(infos.time) : new Date(),
+        };
+        cacheList.push(cacheItem);
+      }
+    });
+    setCacheList(cacheList);
+  }, [cachesLeft]);
 
   /**
    * Adds a Leaflet map to the current DOM element if it doesn't already exist.

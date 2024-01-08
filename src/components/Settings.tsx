@@ -37,6 +37,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   const closeModal = () => setOpen(false);
 
   function showCacheList() {
+    console.log(cacheList);
     closeModal();
     setOpenList(true);
   }

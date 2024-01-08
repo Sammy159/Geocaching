@@ -31,30 +31,45 @@ interface ListMenuProps {
 const CacheListPopup: React.FC<ListMenuProps> = ({
   cacheList,
   setOpenList,
-}) => (
-  <div
-    style={{
-      position: "absolute",
-      zIndex: 100,
-      backgroundColor: "black",
-    }}
-  >
-    <a className="close" onClick={() => setOpenList(false)}>
-      &times;
-    </a>
-    <ul>
-      {cacheList?.map((cache, index) => (
-        <li key={index}>
-          <p>Name: {cache.name},</p>
-          <p>
-            Latitude: {cache.latLng.lat}, Longitude: {cache.latLng.lng},
-          </p>
-          <p>Found: {cache.found ? "Yes" : "No"},</p>
-          <p>Time: {cache.time.toLocaleString()} </p>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
-
+}) => {
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "long", // Tag der Woche (voller Name)
+    year: "numeric", // Jahr (z. B. 2024)
+    month: "long", // Monat (voller Name)
+    day: "numeric", // Tag des Monats (z. B. 08)
+    hour: "2-digit", // Stunde (zweistellige Darstellung)
+    minute: "2-digit", // Minute (zweistellige Darstellung)
+    second: "2-digit", // Sekunde (zweistellige Darstellung)
+    timeZoneName: "short", // Zeitzone (kurze Darstellung)
+  };
+  return (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          top: "-700%",
+          zIndex: 100,
+          backgroundColor: "black",
+        }}
+      >
+        <a className="close" onClick={() => setOpenList(false)}>
+          &times;
+        </a>
+        <ul>
+          {cacheList?.map((cache, index) => (
+            <li key={index}>
+              <p>
+                Name: {cache.name}, Latitude: {cache.latLng.lat.toFixed(4)},
+                Longitude:
+                {cache.latLng.lng.toFixed(4)}, Gefunden:{" "}
+                {cache.found ? "Ja" : "Nein"}, Zeit:
+                {cache.time.toLocaleString("de-DE", options)}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+};
 export default CacheListPopup;
