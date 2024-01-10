@@ -8,6 +8,7 @@ import QrReader from "./components/QRCodeReader";
 import SettingsMenu from "./components/Settings";
 import { useCacheManager } from "./context/CacheManagerContext";
 import compassIcon from "/compass.png";
+import GPSPermissionQuery from "./components/GPSPermission";
 
 function App() {
   // Schnittstelle für die Cache-Liste definieren
@@ -100,6 +101,7 @@ function App() {
 
   return (
     <>
+      <GPSPermissionQuery></GPSPermissionQuery>
       <div className="top-div">
         <h1
           style={{
