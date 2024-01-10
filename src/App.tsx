@@ -10,6 +10,7 @@ import { useCacheManager } from "./context/CacheManagerContext";
 import compassIcon from "/compass.png";
 
 function App() {
+  // Schnittstelle für die Cache-Liste definieren
   interface CacheList {
     name: string;
     latLng: L.LatLng;
@@ -17,41 +18,53 @@ function App() {
     time: Date;
   }
 
+  // Cache-Manager aus dem Kontext holen
   const cacheManager = useCacheManager();
-  const [isHiding, setIsHiding] = useState(false);
-  const [showNextScreen, setNextScreen] = useState(false);
-  const [showQRReader, setShowQRReader] = useState(false);
-  const [qrResult, setQRresult] = useState<string>("");
+
+  // Zustandsvariablen definieren
+  const [isHiding, setIsHiding] = useState<boolean>(false);
+  const [showNextScreen, setNextScreen] = useState<boolean>(false);
+  const [showQRReader, setShowQRReader] = useState<boolean>(false);
+  const [qrResult, setQRResult] = useState<string>("");
   const [cacheList, setCacheList] = useState<CacheList[]>([]);
   const [radiusSetting, setRadiusSetting] = useState<number>(50);
-  const [doSprachausgabe, setDoSprachausgabe] = useState(true);
+  const [doSprachausgabe, setDoSprachausgabe] = useState<boolean>(true);
 
+  // Funktionen zur Steuerung des Bildschirms definieren
   function showHidingScreen() {
     setIsHiding(true);
     setNextScreen(true);
   }
+
   function showSeekingScreen() {
     setIsHiding(false);
     setNextScreen(true);
-    setQRresult("");
+    setQRResult("");
   }
+
   function backToHome() {
     setIsHiding(false);
     setNextScreen(false);
   }
-  function handleQRresult(result: any) {
-    setQRresult(result);
+
+  function handleQRResult(result: string) {
+    setQRResult(result);
     setShowQRReader(false);
   }
-  function handleQRerror(error: any) {
+
+  function handleQRError(error: any) {
     console.log(error?.message);
     setShowQRReader(false);
   }
+
   function toggleQRReader() {
-    setShowQRReader(!showQRReader); // Umschalten der Anzeige des QR-Lesers
+    setShowQRReader(!showQRReader);
   }
+
   useEffect(() => {
+    // Gespeicherte Cache-Daten aus dem lokalen Speicher abrufen
     const gespeicherteDaten = localStorage.getItem("Geocaches");
+
     if (
       gespeicherteDaten !== "undefined" &&
       typeof gespeicherteDaten !== "undefined"
@@ -69,7 +82,7 @@ function App() {
           };
           cacheList.push(cacheItem);
 
-          //Wieder in den CacheManager speichern
+          // Marker für den Cache in den CacheManager hinzufügen
           const latLng = L.latLng(element.latLng.lat, element.latLng.lng);
           const marker = L.marker(latLng);
           cacheManager?.addMarker(
@@ -101,13 +114,12 @@ function App() {
         <img src={compassIcon} alt="compass" className="compassDiv"></img>
       ) : null}
 
-      {showNextScreen &&
-        showQRReader && ( // QR-Leser nur anzeigen, wenn showNextScreen und showQRReader true sind
-          <QrReader
-            handleDecode={handleQRresult}
-            handleError={handleQRerror}
-          ></QrReader>
-        )}
+      {showNextScreen && showQRReader && (
+        <QrReader
+          handleDecode={handleQRResult}
+          handleError={handleQRError}
+        ></QrReader>
+      )}
       {showNextScreen ? (
         <LMap
           isHiding={isHiding}
@@ -124,9 +136,11 @@ function App() {
           ) : (
             <>
               <MyButton text={"Zurück"} onClick={backToHome}></MyButton>
-              <button onClick={toggleQRReader} className="iconButton" id="qr">
-                {/*<img src={qrIcon} alt="QR Leser" style={{ height: "100%" }} />*/}
-              </button>
+              <button
+                onClick={toggleQRReader}
+                className="iconButton"
+                id="qr"
+              ></button>
             </>
           )}
           <SettingsMenu

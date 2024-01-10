@@ -1,3 +1,4 @@
+//Based on: erik_g, https://stackoverflow.com/a/61738144
 import { useCacheManager } from "../context/CacheManagerContext";
 
 /**

@@ -28,7 +28,6 @@ const MyGpxParser = () => {
           const parser = new XMLParser(options);
           let jsonObj = parser.parse(xmlDataStr);
 
-          // Do something with jsonObj, e.g.,
           const parsedCoordinates = jsonObj.gpx.trk.trkseg.trkpt.map(
             (trkpt: any) => {
               const lat = parseFloat(trkpt["@_lat"]);

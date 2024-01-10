@@ -53,9 +53,7 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
         className="iconButton"
         id="settings"
         onClick={() => setOpen((o) => !o)}
-      >
-        {/*<img src={settingsIcon} alt="Settings" style={{ height: "100%" }} />*/}
-      </button>
+      ></button>
       <Popup
         open={open}
         position={"bottom center"}

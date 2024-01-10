@@ -61,7 +61,7 @@ const CacheListPopup: React.FC<ListMenuProps> = ({
               <p>
                 Name: {cache.name}, Latitude: {cache.latLng.lat.toFixed(4)},
                 Longitude:
-                {cache.latLng.lng.toFixed(4)}, Gefunden:{" "}
+                {cache.latLng.lng.toFixed(4)}, Gefunden:
                 {cache.found ? "Ja" : "Nein"}, Zeit:
                 {cache.time.toLocaleString("de-DE", options)}
               </p>
