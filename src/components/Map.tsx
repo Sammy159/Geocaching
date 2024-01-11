@@ -24,6 +24,8 @@ interface MapProps {
   radiusSetting: number;
   doSprachausgabe: boolean;
   setCacheList: (list: CacheList[]) => void;
+  debugModus: boolean;
+  location: GeolocationCoordinates | null;
 }
 
 /**
@@ -37,6 +39,8 @@ const LMap: React.FC<MapProps> = ({
   radiusSetting,
   doSprachausgabe,
   setCacheList,
+  debugModus,
+  location,
 }) => {
   const map = useRef<Map | null>(null);
   const gpxLayerRef = useRef<L.GPX | null>(null);
@@ -50,6 +54,12 @@ const LMap: React.FC<MapProps> = ({
   const cacheManager = useCacheManager();
   //State zum neu Rendern bei Veränderung der Nummen
   const [cachesLeft, setCachesLeft] = useState(0);
+
+  const [debugModusOn, setDebugModusOn] = useState<boolean>(debugModus);
+
+  useEffect(() => {
+    setDebugModusOn(debugModus);
+  }, [debugModus]);
 
   const iconDict: { [key: string]: string } = {
     Cafe: "./Icons/baseline_local_cafe_black_24dp.png",
@@ -133,6 +143,10 @@ const LMap: React.FC<MapProps> = ({
     });
     setCacheList(cacheList);
   }, [cachesLeft]);
+
+  useEffect(() => {
+    setRealLocation();
+  }, [location]);
 
   /**
    * Adds a Leaflet map to the current DOM element if it doesn't already exist.
@@ -349,6 +363,28 @@ const LMap: React.FC<MapProps> = ({
     if (JSONobject) localStorage.setItem("Geocaches", JSONobject);
   }
 
+  function setRealLocation() {
+    if (location) {
+      map.current?.setView(
+        L.latLng([location?.latitude, location?.longitude]),
+        20
+      );
+      if (isFirstMarker.current) {
+        markerRef = L.marker([location?.latitude, location?.longitude], {
+          icon: figureIcon,
+        })
+          .addTo(map.current!)
+          .bindPopup("<b>Aktuelle Position</b>");
+        isFirstMarker.current = false;
+      } else {
+        if (markerRef !== null) {
+          if (location)
+            markerRef.setLatLng([location?.latitude, location?.longitude]);
+        }
+      }
+    }
+  }
+
   return (
     <div
       style={{
@@ -362,8 +398,15 @@ const LMap: React.FC<MapProps> = ({
         Anzahl {isHiding ? "" : "noch"} versteckter Caches: {cachesLeft}
       </div>
       <div id="map"></div>
-      <MyButton text={"Losgehen"} onClick={startWalk} />
-      <MyButton text={"Pause"} onClick={pauseInterval} />
+      {debugModusOn ? (
+        <>
+          <MyButton text={"Losgehen"} onClick={startWalk} />
+          <MyButton text={"Pause"} onClick={pauseInterval} />
+        </>
+      ) : (
+        <div>{debugModusOn}</div>
+      )}
+
       {isHiding ? <Dropdown onSelect={handleCacheSelect} /> : null}
     </div>
   );

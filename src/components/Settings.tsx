@@ -5,6 +5,7 @@ import "reactjs-popup/dist/index.css";
 import "./button.css";
 import CacheListPopup from "./CacheList";
 import DownloadGPXFileLink from "./ExportToFile";
+import GPSPermissionQuery from "./GPSPermission";
 
 interface CacheList {
   name: string;
@@ -18,6 +19,8 @@ interface SettingsMenuProps {
   setRadiusSetting: (numbr: number) => void;
   setDoSprachausgabe: (bool: boolean) => void;
   doSprachausgabe: boolean;
+  setDebugModusOn: (bool: boolean) => void;
+  setLocation: (coords: GeolocationCoordinates | null) => void;
 }
 
 const SettingsMenu: React.FC<SettingsMenuProps> = ({
@@ -25,14 +28,17 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   setRadiusSetting,
   setDoSprachausgabe,
   doSprachausgabe,
+  setDebugModusOn,
+  setLocation,
 }) => {
   const divStyle = {
     color: "black",
   };
-  const [open, setOpen] = useState(false);
-  const [openList, setOpenList] = useState(false);
-  const [openRadiusInput, setOpenRadiusInput] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [openList, setOpenList] = useState<boolean>(false);
+  const [openRadiusInput, setOpenRadiusInput] = useState<boolean>(false);
   const [sprachausgabe, setSprachausgabe] = useState(doSprachausgabe);
+  const [debugModus, setDebugModus] = useState<boolean>(true);
   const radiusInputRef = useRef<HTMLInputElement>(null);
   const closeModal = () => setOpen(false);
 
@@ -109,6 +115,26 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
           </label>
           <br></br>
           <DownloadGPXFileLink></DownloadGPXFileLink>
+          <br></br>
+          <label htmlFor="debugModus">
+            Debugmodus
+            <input
+              type="checkbox"
+              id="debugModus"
+              name="debugModus"
+              checked={debugModus}
+              onChange={(e) => {
+                setDebugModusOn(e.target.checked);
+                setDebugModus(e.target.checked);
+              }}
+            ></input>
+            {!debugModus ? (
+              <GPSPermissionQuery
+                setLocation={setLocation}
+              ></GPSPermissionQuery>
+            ) : null}
+          </label>
+          <br></br>
         </div>
       </Popup>
 

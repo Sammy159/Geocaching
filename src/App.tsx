@@ -8,7 +8,6 @@ import QrReader from "./components/QRCodeReader";
 import SettingsMenu from "./components/Settings";
 import { useCacheManager } from "./context/CacheManagerContext";
 import compassIcon from "/compass.png";
-import GPSPermissionQuery from "./components/GPSPermission";
 
 function App() {
   // Schnittstelle für die Cache-Liste definieren
@@ -30,6 +29,8 @@ function App() {
   const [cacheList, setCacheList] = useState<CacheList[]>([]);
   const [radiusSetting, setRadiusSetting] = useState<number>(50);
   const [doSprachausgabe, setDoSprachausgabe] = useState<boolean>(true);
+  const [debugModus, setDebugModus] = useState<boolean>(true);
+  const [location, setLocation] = useState<GeolocationCoordinates | null>(null);
 
   // Funktionen zur Steuerung des Bildschirms definieren
   function showHidingScreen() {
@@ -101,7 +102,6 @@ function App() {
 
   return (
     <>
-      <GPSPermissionQuery></GPSPermissionQuery>
       <div className="top-div">
         <h1
           style={{
@@ -129,6 +129,8 @@ function App() {
           radiusSetting={radiusSetting}
           doSprachausgabe={doSprachausgabe}
           setCacheList={setCacheList}
+          debugModus={debugModus}
+          location={location}
         ></LMap>
       ) : null}
       <div className="bottom-div">
@@ -150,6 +152,8 @@ function App() {
             setRadiusSetting={setRadiusSetting}
             setDoSprachausgabe={setDoSprachausgabe}
             doSprachausgabe={doSprachausgabe}
+            setDebugModusOn={setDebugModus}
+            setLocation={setLocation}
           ></SettingsMenu>
           {!showNextScreen ? (
             <MyButton text={"Suchen"} onClick={showSeekingScreen}></MyButton>

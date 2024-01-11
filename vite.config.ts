@@ -27,7 +27,6 @@ export default defineConfig({
       workbox: {},
       // Benutzerdefinierte Berechtigungen aktivieren
       registerType: "prompt",
-      includeAssets: ["favicon.ico", "robots.txt", "apple-touch-icon.png"],
     }),
   ],
 });
