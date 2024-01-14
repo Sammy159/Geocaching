@@ -250,6 +250,7 @@ const LMap: React.FC<MapProps> = ({
                     //TTS
                     if (isSprachausgabeActive) {
                       var speech = new SpeechSynthesisUtterance(name);
+                      speech.lang = "de-DE";
                       window.speechSynthesis.speak(speech);
                     }
                   }
